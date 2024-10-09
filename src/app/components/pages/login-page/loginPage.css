@@ -1,0 +1,8 @@
+.block{
+    background-image: url('http://ati.eastus.cloudapp.azure.com:5000/Content/Images/Banners/Login-3.jpg');
+    width: 100vw;
+    background-size: cover;
+    height: calc(100vh - 200px);
+    background-position: center;
+    background-repeat: no-repeat;
+}

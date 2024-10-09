@@ -1,0 +1,11 @@
+.header-container{
+    width: auto;
+    height: 130px;
+    background-color: white;
+}
+.header-image{
+    margin-right: 5px;
+    position: absolute;
+    top: 23px;
+    left: 80px
+}

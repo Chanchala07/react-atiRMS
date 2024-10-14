@@ -1,14 +1,21 @@
 import './App.css';
-import Footer from './app/components/footer/Footer';
-import Header from './app/components/header/Header';
 import LoginPage from './app/components/pages/login-page/LoginPage';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import NotFoundPage from './app/components/pages/NotFoundPage';
+import EmployeeList from './app/components/pages/employee/EmployeeList';
+import NavBar from './app/components/pages/navbar/NavBar';
 
 function App() {
   return (
   <>
-  <Header/>
-  <LoginPage/>
-  <Footer/>
+  <BrowserRouter>
+      <Routes>
+        <Route path="/" element={  <LoginPage/>}/>
+        <Route path="/employee-list" element={  <EmployeeList/>}/>
+        <Route path="/navbar" element={  <NavBar/>}/>
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </BrowserRouter>
   </>
   );
 }

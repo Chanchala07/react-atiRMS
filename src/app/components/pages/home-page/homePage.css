@@ -1,0 +1,24 @@
+.Section{
+    background-image: linear-gradient(rgba(0, 0, 0, 0.23), rgba(0, 0, 0, 0.23)), url('http://ati.eastus.cloudapp.azure.com:5000/Content/Images/Banners/Login-3.jpg');
+    width: 100vw;
+    background-size: cover;
+    height: calc(100vh - 200px);
+    background-position: center;
+    padding: 30px;
+    background-repeat: no-repeat;
+}
+.login-container{
+    padding: 40px;
+    background-color: #13121240 !important;
+    opacity: 0.8 !important;
+}
+.fa-icon{
+    top: 10px;
+    position: absolute;
+    right: 11px;
+    color: #777;  
+}
+.top-div{
+    height: 55px;
+    background: #564aa3;
+}

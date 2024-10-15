@@ -3,7 +3,8 @@ import React from 'react'
 const EmployeeList = () => {
   return (
    <>
-   <h1>Emloyee</h1></>
+   <h1>vnlkdfg</h1>
+  </>
   )
 }
 

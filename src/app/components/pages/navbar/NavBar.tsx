@@ -1,20 +1,26 @@
-import React from 'react'
+import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+
+import './navBar.css';
 
 const NavBar = () => {
   return (
-   <>
-   <nav className="navbar navbar-inverse">
-  <div className="container-fluid">
-    <div className="navbar-header">
-      <a className="navbar-brand" href="#">WebSiteName</a>
-    </div>
-  
-    <ul className="nav navbar-nav navbar-right">
-      <li><a href="#"><span className="glyphicon glyphicon-log-in"></span> LogOut</a></li>
-    </ul>
-  </div>
-</nav>
-   </>
+    <>
+      <header className="topnavbar-wrapper">
+        <nav className="navbar topnavbar">
+          <div className="navbar-header">
+          
+          </div>
+          <div>
+            <ul className="nav navbar-nav navbar-right">
+              <li><a href="#"> <FontAwesomeIcon icon={faSignOutAlt} className='fa-icon' style={{ color: "#fff" }} /></a></li>
+            </ul>
+          </div>
+
+        </nav>
+      </header>
+
+    </>
   )
 }
 

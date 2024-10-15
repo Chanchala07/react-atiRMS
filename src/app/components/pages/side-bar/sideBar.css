@@ -1,0 +1,55 @@
+/* General styles for the App */
+.App {
+    font-family: Arial, sans-serif;
+    transition: margin-left 0.3s; /* Smooth transition for the main content */
+}
+
+/* Sidebar styles */
+.w3-sidebar {
+    background-color: #333; /* Dark background color */
+    color: white; /* Text color */
+    position: fixed; /* Fixed position for the sidebar */
+    z-index: 1; /* Stack above other content */
+    height: 100%; /* Full height */
+    overflow-y: auto; /* Scroll if needed */
+}
+
+/* Sidebar links */
+.w3-bar-item {
+    padding: 16px; /* Padding for links */
+    text-decoration: none; /* Remove underline */
+    color: white; /* Text color */
+    display: block; /* Block display for full width */
+    transition: background 0.3s; /* Smooth transition for hover effect */
+}
+
+.w3-bar-item:hover {
+    background-color: #575757; /* Darker background on hover */
+}
+
+/* Button styles */
+.w3-button {
+    background-color: transparent; /* Teal background */
+    color: white; /* White text */
+    border: none; /* No border */
+    padding: 10px 15px; /* Padding */
+    cursor: pointer; /* Pointer cursor */
+    transition: background 0.3s; /* Smooth transition */
+}
+
+.w3-button:hover {
+    background-color:#6357ae; /* Darker green on hover */
+
+}
+
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+    .w3-sidebar {
+        width: 100%; /* Full width on small screens */
+        display: none; /* Hidden by default */
+    }
+    .w3-sidebar.open {
+        display: block; /* Show when open */
+    }
+}

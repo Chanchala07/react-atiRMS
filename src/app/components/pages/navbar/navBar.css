@@ -1,0 +1,8 @@
+.navbar{
+    background-color: #6357ae;
+    min-height: 55px;
+}
+.navbar-header{
+    width: 220px;
+    text-align: center;
+}

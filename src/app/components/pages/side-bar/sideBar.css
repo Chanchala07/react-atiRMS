@@ -6,7 +6,7 @@
 
 /* Sidebar styles */
 .w3-sidebar {
-    background-color: #333; /* Dark background color */
+    background-color: #3a3f51; /* Dark background color */
     color: white; /* Text color */
     position: fixed; /* Fixed position for the sidebar */
     z-index: 1; /* Stack above other content */
@@ -52,4 +52,42 @@
     .w3-sidebar.open {
         display: block; /* Show when open */
     }
+}
+.user-picture{
+    width: 60px;
+}
+.user-circle{
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    background-color: #6357ae;
+    line-height: 50px;
+    text-align: center;
+    font-size: 26px;
+    font-weight: normal;
+}
+.user-info{
+    padding: 15px;
+}
+.user-name{
+    color: #7D848F;
+    font-size: 13px;
+}
+.user-role{
+    font-size: 11px;
+    color: #6357ae;
+}
+div .employee{
+    border-left: 3px solid transparent;
+    border-left-color: #9289ca;
+    padding: 12px 24px;
+    background-color: #3a3f51;
+    color: #6357ae;
+}
+.employee-link{
+    text-decoration: none;
+}
+.employee-text{
+    color:#9289ca;
+    font-size: 14px;
 }

@@ -4,7 +4,8 @@ import atiLogo from '../../../assets/images/logo-white.png';
 import EmployeeList from '../employee/EmployeeList';
 import FooterLogin from '../footer-after-login/FooterLogin';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons"
+import { faSignOutAlt, faUsers, faUsersRectangle } from "@fortawesome/free-solid-svg-icons"
+import { Link } from 'react-router-dom';
 
 
 const SideBar = () => {
@@ -20,7 +21,10 @@ const SideBar = () => {
                 {/* Sidebar */}
                 <div
                     className={`w3-sidebar w3-bar-block w3-card w3-animate-left ${isSidebarOpen ? 'open' : 'closed'}`}
-                    style={{ display: isSidebarOpen ? 'block' : 'none', width: '25%' }}
+                    style={{ display: 'block' ,
+                    width: isSidebarOpen ? '220px' : '70px',
+                    // transition: 'width 0.3s'
+                     }}
                     id="mySidebar"
                 >  
                  <nav className="navbar topnavbar">
@@ -28,19 +32,40 @@ const SideBar = () => {
                         <img
                         src={atiLogo}
                         onClick={toggleSidebar}
-                        style={{ cursor: 'pointer', height:"20px" }}
+                        style={{ cursor: 'pointer', width: isSidebarOpen ? "100px" : "40px" }}
                         alt="Sidebar Close"
                     />
                         </div>
                     </nav>
-
-                    <a href="#" className="w3-bar-item w3-button">Link 1</a>
-                    <a href="#" className="w3-bar-item w3-button">Link 2</a>
-                    <a href="#" className="w3-bar-item w3-button">Link 3</a>
+                    <div className='asidebar'>
+                        <div className='user-block'>
+                           <div className='pt-4 pb-2'>
+                            <div className='mx-auto user-picture'>
+                                <div className='user-circle'>
+                                   S
+                                </div>
+                            </div>
+                            {isSidebarOpen && (
+                                 <div className='user-info text-center d-flex flex-column'>
+                                 <span className='user-name'>Hello, Super Admin</span>
+                                 <span className='user-role'>SuperAdmin <em className="fa fa-pencil"></em></span>                               
+                             </div>
+                            )}
+                           
+                           </div>
+                        </div>
+                        <div className='employee'>
+                            <Link to='' title='Employee' className='employee-link'>
+                               <FontAwesomeIcon icon={faUsers} style={{color:"#fff",marginRight:"6%"}}/>
+                               { isSidebarOpen && (<span className='employee-text'>Employee</span> )}
+                            </Link> 
+                        </div>
+                    </div>
+                    
                 </div>
 
                 {/* Main Content */}
-                <div style={{ marginLeft: isSidebarOpen ? '25%' : '0%' }}>
+                <div style={{ marginLeft: isSidebarOpen ? '16%' : '5%' }}>
 
                     <header className="topnavbar-wrapper" style={{ background: "#6357ae" }}>
                         <nav className="navbar topnavbar">

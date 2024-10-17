@@ -8,7 +8,7 @@ const HomePage = () => {
   return (
     <>
       <div className='w-100 '>
-      <SideBar />
+      <SideBar />     
       </div>
     </>
   )

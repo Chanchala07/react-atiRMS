@@ -1,0 +1,27 @@
+.content-wrapper{
+    padding: 20px;
+}
+.heading h3{
+    margin: -15px;
+    font-size: 24px;
+    color: #929292;
+    padding: 15px;
+    font-weight: normal;
+    margin-bottom: 10px;
+    background-color: #fafbfc;
+    border-bottom: 1px solid #cfdbe2
+}
+.panel{
+    border-top-width: 3px;
+    border: 1px solid #cfdbe2;
+    border-top-width: 3px ;
+    padding: 10px 20px;
+    border-radius: 4px;
+    background-color: #fff;
+}
+.panel-body{
+    padding:15px;
+    font-size: 12px;
+    color: #656565;
+    font-weight: bold;
+}

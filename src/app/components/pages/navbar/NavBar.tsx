@@ -2,6 +2,7 @@ import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 
 import './navBar.css';
+import { Link } from "react-router-dom";
 
 const NavBar = () => {
   return (
@@ -13,7 +14,7 @@ const NavBar = () => {
           </div>
           <div>
             <ul className="nav navbar-nav navbar-right">
-              <li><a href="#"> <FontAwesomeIcon icon={faSignOutAlt} className='fa-icon' style={{ color: "#fff" }} /></a></li>
+              <li><Link to="/"> <FontAwesomeIcon icon={faSignOutAlt} className='fa-icon' style={{ color: "#fff" }} /></Link></li>
             </ul>
           </div>
 

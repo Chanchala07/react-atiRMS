@@ -1,0 +1,40 @@
+.employye-box{
+    margin-bottom: 21px;
+    background-color: #fff;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    border-color: #cfdbe2;
+}
+.panel-heading{
+    padding: 10px 15px;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+    font-size: 14px;
+}
+.bg-dark-gray{
+    background-color: #3a3f51;
+    color: #fff;
+}
+.panel-footer{
+    padding: 10px 15px;
+    display: block;
+    width: 100%;
+    font-size: 14px;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+.bg-reen{
+    color: #fff;
+    background-color: #37bc9b;
+    border-color: #37bc9b;
+}
+.bg-red{
+    color: #fff;
+    background-color: #f05050;
+    border-color: #cfdbe2;
+}
+.icon-large {
+    font-size: 5em;
+}

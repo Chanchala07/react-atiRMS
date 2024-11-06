@@ -11,7 +11,7 @@
     position: fixed; /* Fixed position for the sidebar */
     z-index: 1; /* Stack above other content */
     height: 100%; /* Full height */
-    overflow-y: auto; /* Scroll if needed */
+    
 }
 
 /* Sidebar links */
@@ -90,4 +90,7 @@ div .employee{
 .employee-text{
     color:#9289ca;
     font-size: 14px;
+}
+.text-purple{
+    color: #6357ae;
 }

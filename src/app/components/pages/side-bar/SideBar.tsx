@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './sideBar.css';
 import atiLogo from '../../../assets/images/logo-white.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArchive, faDashboard, faSignOutAlt, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faArchive, faDashboard, faEdit, faSignOutAlt, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { Link, Outlet } from 'react-router-dom';
 import Profile from '../my-profile/Profile';
 import AddEmployee from '../add-Employee/AddEmployee';
@@ -28,7 +28,7 @@ const SideBar = () => {
                 }}
                 id="mySidebar"
             >
-                <nav className="navbar topnavbar">
+                <nav className="navbar topnavbar" style={{ background: "#6357ae" }}>
                     <div className="navbar-header">
                         <img
                             src={atiLogo}
@@ -46,30 +46,34 @@ const SideBar = () => {
                             </div>
                             {isSidebarOpen && (
                                 <div className='user-info text-center d-flex flex-column'>
-                                    <span className='user-name'>Hello, Super Admin</span>
-                                    <span className='user-role'>SuperAdmin <em className="fa fa-pencil"></em></span>
+                                    <span className='user-name'>Hello, Super Admin</span>                       
+                                    <span className='user-role'>
+                                        <Link to= '/home-page/profile' className='text-decoration-none text-purple'>SuperAdmin </Link>
+                                        <FontAwesomeIcon icon={faEdit}/>
+                                    </span>
                                 </div>
                             )}
                         </div>
+                        
                     </div>
                     <div className='employee'>
-                        <Link to="/home-page/dashboard" title='Dashboard' className='employee-link'>
-                            <FontAwesomeIcon icon={faDashboard} style={{ color: "#fff", marginRight: "6%" }} />
-                            {isSidebarOpen && (<span className='employee-text'>Dashboard</span>)}
-                        </Link>
-                    </div>
-                    <div className='employee'>
-                        <Link to="/home-page/employee-list" title='Active Employee' className='employee-link'>
-                            <FontAwesomeIcon icon={faUsers} style={{ color: "#fff", marginRight: "6%" }} />
-                            {isSidebarOpen && (<span className='employee-text'>Active Employees</span>)}
-                        </Link>
-                    </div>
-                    <div className='employee'>
-                        <Link to="/home-page/archived-employees" title='Archived Employees' className='employee-link'>
-                            <FontAwesomeIcon icon={faArchive} style={{ color: "#fff", marginRight: "6%" }} />
-                            {isSidebarOpen && (<span className='employee-text'>Archived Employees</span>)}
-                        </Link>
-                    </div>
+                            <Link to="/home-page/dashboard" title='Dashboard' className='employee-link'>
+                                <FontAwesomeIcon icon={faDashboard} style={{ color: "#fff", marginRight: "6%" }} />
+                                {isSidebarOpen && (<span className='employee-text'>Dashboard</span>)}
+                            </Link>
+                        </div>
+                        <div className='employee'>
+                            <Link to="/home-page/employee-list" title='Active Employee' className='employee-link'>
+                                <FontAwesomeIcon icon={faUsers} style={{ color: "#fff", marginRight: "6%" }} />
+                                {isSidebarOpen && (<span className='employee-text'>Active Employees</span>)}
+                            </Link>
+                        </div>
+                        <div className='employee'>
+                            <Link to="/home-page/archived-employees" title='Archived Employees' className='employee-link'>
+                                <FontAwesomeIcon icon={faArchive} style={{ color: "#fff", marginRight: "6%" }} />
+                                {isSidebarOpen && (<span className='employee-text'>Archived Employees</span>)}
+                            </Link>
+                        </div>
                 </div>
             </div>
 

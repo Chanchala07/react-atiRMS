@@ -93,11 +93,13 @@ const columns = [
   },
   {
     name: 'ATI End Year',
-    selector: (row: any) => {
-      if(!row.ATIEndYear) return '-';  
+    selector: (row: any) => {     
       const getMonth = (new Date(row.ATIEndYear).getMonth() + 1).toString().padStart(2,'0');  
       const getYear = new Date(row.ATIEndYear).getFullYear();
-      return `${getMonth}/${getYear}`;
+      if(row.ATiEndPresent)
+        return row.ATIEndYear ? `${getMonth}/${getYear}` : 'Ongoing';
+      else
+        return row.ATIEndYear ? `${getMonth}/${getYear}` : '-';
     },
     sortable: true,
     width: '150px'

@@ -1,12 +1,19 @@
-import { useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import './profile.css';
 import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
 
 const Profile = () => {
   const [showModal, setShowModal] = useState(false);
+  const [showUserModal , setShowUserModal] = useState(false);
+  const [activeTab, setActiveTab] = useState('personalDetails');
   const handleShow = () => setShowModal(true);
   const handleHide = () => setShowModal(false);
+  const handleShowUser = () => setShowUserModal(true);
+  const handleHideUser = () => setShowUserModal(false);
+  const tabClick = (tab: string) => {
+    setActiveTab(tab);
+  };
   return (
     <>
       <div className='content-wrapper'>
@@ -19,31 +26,47 @@ const Profile = () => {
           </h3>
         </div>
         <div className='row'>
-          <ul className="nav nav-tabs">
-            <li className="nav-item">
-              <a className="nav-link active" aria-current="page" href="#">Personal Details</a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href="#">Users Details</a>
-            </li>
-
-          </ul>
+          <div className="d-flex justify-content-between align-items-center">
+            <ul className="nav nav-tabs">
+              <li className="nav-item">
+                <a
+                  className={`nav-link ${activeTab === 'personalDetails' ? 'active' : ''}`}
+                  onClick={() => tabClick('personalDetails')}
+                  href="#"
+                >
+                  Personal Details
+                </a>
+              </li>
+              <li className="nav-item">
+                <a
+                  className={`nav-link ${activeTab === 'userDetails' ? 'active' : ''}`}
+                  onClick={() => tabClick('userDetails')}
+                  href="#"
+                >
+                  User Details
+                </a>
+              </li>
+            </ul>
+            <a type='button' className='btn btn-primary btn-user' data-toggle="modal" data-target="#addUserModal" onClick={handleShowUser}>Add New User</a>
+          </div>
         </div>
+
         <div className='row'>
           <div className='col-md-12'>
             <form>
-              <div className='tab-content p-0 b-0'>
-                <div id='' className='active'>
+              <div className='tab-content p-0 b-0'>                
+                <div className='active'>
                   <div className='panel panel-default'>
-                    <div className='panel-body'>
+                    <div className='panel-body'>{
+                      activeTab === 'personalDetails' && (                      
                       <div className='row'>
                       <div className='col-md-6'>
                         <div className='mb-3'>
-                          <label className='form-label'>Name <span className='text-danger'>* System generated</span></label>
+                          <label className='form-label'>Unique Id  <span className='text-danger'>* System generated</span></label>
                           <input 
                             className='form-control'
                             type='text'
-                            id = 'name'
+                            id = 'userId_unique'
                             disabled
                             />
                         </div>
@@ -75,6 +98,103 @@ const Profile = () => {
                         </div>
                         
                       </div>
+                      )}
+
+                      {/* //For User Details */}
+                      {activeTab === 'userDetails' && (
+                        <div className='row'>
+                          <table id='userDetails' className='table'>
+                            <thead>
+                              <tr>
+                                <th>Name</th>
+                                <th>User Name</th>
+                                <th>Password</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>Dave Mauer</td>
+                                <td>david.mauer@atiinc.com</td>
+                                <td>atiRMS@123</td>
+                                <td>
+                                  <a className='btn btn-info btn-xs btns'>Archive</a>
+                                  <a className='btn btn-danger btn-xs btns'>Change Password</a>
+                                  <a className='btn btn-info btn-xs btns bg-purple' style={{"borderColor":"#6357ae"}}>Edit</a>
+                                  <a className='btn btn-info btn-xs btns'>View Resume</a>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>Dave Mauer</td>
+                                <td>david.mauer@atiinc.com</td>
+                                <td>atiRMS@123</td>
+                                <td>
+                                  <a className='btn btn-info btn-xs btns'>Archive</a>
+                                  <a className='btn btn-danger btn-xs btns'>Change Password</a>
+                                  <a className='btn btn-info btn-xs btns bg-purple' style={{"borderColor":"#6357ae"}}>Edit</a>
+                                  <a className='btn btn-info btn-xs btns'>View Resume</a>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>Dave Mauer</td>
+                                <td>david.mauer@atiinc.com</td>
+                                <td>atiRMS@123</td>
+                                <td>
+                                  <a className='btn btn-info btn-xs btns'>Archive</a>
+                                  <a className='btn btn-danger btn-xs btns'>Change Password</a>
+                                  <a className='btn btn-info btn-xs btns bg-purple' style={{"borderColor":"#6357ae"}}>Edit</a>
+                                  <a className='btn btn-info btn-xs btns'>View Resume</a>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>Dave Mauer</td>
+                                <td>david.mauer@atiinc.com</td>
+                                <td>atiRMS@123</td>
+                                <td>
+                                  <a className='btn btn-info btn-xs btns'>Archive</a>
+                                  <a className='btn btn-danger btn-xs btns'>Change Password</a>
+                                  <a className='btn btn-info btn-xs btns bg-purple' style={{"borderColor":"#6357ae"}}>Edit</a>
+                                  <a className='btn btn-info btn-xs btns'>View Resume</a>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>Dave Mauer</td>
+                                <td>david.mauer@atiinc.com</td>
+                                <td>atiRMS@123</td>
+                                <td>
+                                  <a className='btn btn-info btn-xs btns'>Archive</a>
+                                  <a className='btn btn-danger btn-xs btns'>Change Password</a>
+                                  <a className='btn btn-info btn-xs btns bg-purple' style={{"borderColor":"#6357ae"}}>Edit</a>
+                                  <a className='btn btn-info btn-xs btns'>View Resume</a>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>Dave Mauer</td>
+                                <td>david.mauer@atiinc.com</td>
+                                <td>atiRMS@123</td>
+                                <td>
+                                  <a className='btn btn-info btn-xs btns'>Archive</a>
+                                  <a className='btn btn-danger btn-xs btns'>Change Password</a>
+                                  <a className='btn btn-info btn-xs btns bg-purple' style={{"borderColor":"#6357ae"}}>Edit</a>
+                                  <a className='btn btn-info btn-xs btns'>View Resume</a>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>Dave Mauer</td>
+                                <td>david.mauer@atiinc.com</td>
+                                <td>atiRMS@123</td>
+                                <td>
+                                  <a className='btn btn-info btn-xs btns'>Archive</a>
+                                  <a className='btn btn-danger btn-xs btns'>Change Password</a>
+                                  <a className='btn btn-info btn-xs btns bg-purple' style={{"borderColor":"#6357ae"}}>Edit</a>
+                                  <a className='btn btn-info btn-xs btns'>View Resume</a>
+                                </td>
+                              </tr>
+
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
                       
                     </div>
                   </div>
@@ -88,17 +208,102 @@ const Profile = () => {
         <div className="modal-dialog" role="document">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title">Modal title</h5>
-              <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
+              <h5 className="modal-title fw-bold">Change Password</h5>
+              <button type="button" className="close btn-close" data-dismiss="modal" aria-label="Close">
+                {/* <span aria-hidden="true">&times;</span> */}
               </button>
             </div>
             <div className="modal-body">
-              <p>Modal body text goes here.</p>
+              <form>
+                <div className='col-md-12'>
+                  <div className='mb-2'>
+                    <label className='form-label fw-bold fs-12'>New Password</label>
+                    <input
+                      type='password'
+                      className='form-control'
+                      id='userPassword'
+                      name='userPassword'
+                      required                      
+                      placeholder='Password'
+                    />
+                  </div>
+                  <div className='mb-2'>
+                    <label className='form-label fw-bold fs-12'>Confirm Password</label>
+                    <input
+                      type='password'
+                      className='form-control'
+                      id='confirmPassword'
+                      name='confirmPassword'
+                      required                      
+                      placeholder='Re-enter Password'
+                    />
+                  </div>
+                </div>
+              </form>
             </div>
-            <div className="modal-footer">
-              <button type="button" className="btn btn-primary">Save changes</button>
-              <button type="button" className="btn btn-secondary" onClick={handleHide}>Close</button>
+            <div className="modal-footer border-top-0">
+              <button type="button" className="btn btn-primary bg-purple btn-change-pwd col-md-12">Change Password</button>
+              <button type="button" className="btn btn-secondary btn-change-pwd col-md-12" onClick={handleHide}>Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* User Modal*/}
+      <div className={`modal fade ${showUserModal ? 'show': ''}`} style={{ display: showUserModal ? 'block' : 'none' }} id="addUserModal" role="dialog" aria-labelledby="addUserLabel" aria-hidden="true">
+        <div className="modal-dialog" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title fw-bold" id="">Add User</h5>
+              <button type="button" className="close btn-close" data-dismiss="modal" aria-label="Close">
+                {/* <span aria-hidden="true">&times;</span> */}
+              </button>
+            </div>
+            <div className="modal-body">
+              <form>
+                <div className='col-md-12'>
+                  <div className='mb-2'>
+                    <label className='form-label fw-bold fs-12'>Name</label>
+                    <input type='text'
+                      className='form-control'
+                      id='createName'
+                      placeholder='Name'
+                      required
+                    />
+                  </div>
+                  <div className='mb-2'>
+                    <label className='form-label fw-bold fs-12'>User Name <span className='text-danger'>*</span></label>
+                    <input type='text'
+                    className='form-control'
+                    id='createUserName'
+                    placeholder='someone@nowhere.com'
+                    required
+                    />
+                  </div>
+                  <div className='mb-2'>
+                    <label className='form-label fw-bold fs-12'>New Password</label>
+                    <input type='password'
+                      id='userPassword'
+                      placeholder='Password'
+                      className='form-control'
+                      required
+                    />
+                  </div>
+                  <div className='mb-2'>
+                    <label className='form-label fw-bold fs-12'>Confirm Password</label>
+                    <input type='password'
+                      id='createConfirm'
+                      placeholder='Re-enter Password'
+                      className='form-control'
+                      required
+                    />
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div className="modal-footer border-top-0">
+            <button type="button" className="btn btn-primary btn-change-pwd bg-purple col-md-12">Save</button>
+              <button type="button" className="btn btn-secondary btn-change-pwd col-md-12" data-dismiss="modal" onClick={handleHideUser}>Close</button>
+             
             </div>
           </div>
         </div>

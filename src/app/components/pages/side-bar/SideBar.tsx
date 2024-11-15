@@ -28,7 +28,7 @@ const SideBar = () => {
                 }}
                 id="mySidebar"
             >
-                <nav className="navbar topnavbar" style={{ background: "#6357ae" }}>
+                <nav className="navbar topnavbar" style={{ background: "#6357ae",height:"60px" }}>
                     <div className="navbar-header">
                         <img
                             src={atiLogo}
@@ -69,7 +69,7 @@ const SideBar = () => {
                             </Link>
                         </div>
                         <div className='employee'>
-                            <Link to="/home-page/archived-employees" title='Archived Employees' className='employee-link'>
+                            <Link to="/home-page/archived-list" title='Archived Employees' className='employee-link'>
                                 <FontAwesomeIcon icon={faArchive} style={{ color: "#fff", marginRight: "6%" }} />
                                 {isSidebarOpen && (<span className='employee-text'>Archived Employees</span>)}
                             </Link>
@@ -99,8 +99,9 @@ const SideBar = () => {
 
                 {/* Render Content Based on Route */}
                 <Outlet />
+                <FooterLogin />
             </div>
-            <FooterLogin />
+          
         </div>
     );
 };

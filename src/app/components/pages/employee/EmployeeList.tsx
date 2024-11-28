@@ -28,7 +28,7 @@ const columns = [
   //{ name: 'ID', selector:( row:any )=> row.Id, sortable: true },
   {
     name: 'Actions',
-     cell: ( row:any ) => <Link to= '/home-page/add-employee' className='btn btn-primary btn-sm' style={{background: "#23b7e5",border: "none"}}>View or Edit</Link>,
+     cell: ( row:any ) => <Link to= {`/home-page/add-employee/${row.Id}`} className='btn btn-primary btn-sm' style={{background: "#23b7e5",border: "none"}}>View or Edit</Link>,
     ignoreRowClick: true,
     allowOverflow: true,
     button: true,
@@ -112,7 +112,7 @@ return (
   <>
     <div className='content-wraper'>
       <div className='heading'>
-        <h3>Employee List</h3>
+        <h3>Active Employees</h3>
       </div>
       <div className='row'>
         <div className='col-md-12 col-lg-12'>

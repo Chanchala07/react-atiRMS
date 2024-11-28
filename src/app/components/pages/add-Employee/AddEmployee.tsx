@@ -1,10 +1,221 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './addEmployee.css';
+import { json } from 'stream/consumers';
+import DataTable from 'react-data-table-component';
+import { Link, useParams } from 'react-router-dom';
 
 const AddEmployee = () => {
+  const [value, setValue] = useState({
+    Name: '',
+    TitleRole: '',
+    CompanyLocation: '',
+    Education: '',
+    CertificatesLicenses : '',
+    OtherQualification: '',
+    WorkStartYear: '',
+    WorkEndYear: '',
+    WorkEndPresent: '',
+    ATIStartYear: '',
+    ATIEndYear: '',
+    ATiEndPresent: '', 
+  
+  });
+  const [projectList, setProjectList] = useState<any[]>([]); 
+  const {id} = useParams<{id: string}>();
   const [showModal, setShowModal ] = useState(false);
   const handleShow = () => setShowModal(true);
   const handleHide = () => setShowModal(false);
+
+  useEffect(() => {
+    if(id){
+      const getEmployee = `http://ati.eastus.cloudapp.azure.com:5001/api/employee/${id}`;
+    fetch(getEmployee)
+      .then(response => {
+          if(!response.ok){
+            throw new Error("Failed to fetch api");
+          }
+          return response.json();
+      })
+      .then(data => {
+        if (data && data.Response) {
+          const formattedWorkStartYear = data.Response.WorkStartYear ? data.Response.WorkStartYear.split('T')[0]: ''
+          const formattedWorkEndYear = data.Response.WorkEndYear ? data.Response.WorkEndYear.split('T')[0]: ''
+          const formattedATIStartYear = data.Response.ATIStartYear ? data.Response.ATIStartYear.split('T')[0]: ''
+          const formattedATIEndYear = data.Response.ATIEndYear ? data.Response.ATIEndYear.split('T')[0]: ''
+          setValue((prev) => ({
+            ...prev,         
+            ...data.Response, // Merge API response into the state object
+            WorkStartYear : formattedWorkStartYear,
+            WorkEndYear: formattedWorkEndYear,
+            ATIStartYear: formattedATIStartYear,
+            ATIEndYear: formattedATIEndYear
+          }));
+          const pro_list = data.Response.proejctList || [];
+          setProjectList(pro_list);
+          console.log('Project List:', pro_list);
+        }
+      })
+      .catch(error => {
+        console.log("error",error);
+      });
+    }
+    
+  }, []);
+
+  const handleChange = (e: { target: { name: any; value: any; }; }) => {
+    const { name, value } = e.target;
+    setValue((prev) => ({
+      ...prev,
+      [name]: value, // Update the specific field in the state object
+    }));
+  };
+
+  const columns = [
+    {
+      name: 'Actions',
+      cell: (row: any) => <>
+        <div className='flex flex-column'>
+          <Link to='' className='btn btn-primary btn-sm m-1' style={{ background: "#6357ae", border: "none",padding: "6px 16px" }}> Edit </Link>
+          <Link to='' className='btn btn-primary btn-sm m-1' style={{ background: "#f05050", border: "none" }}> Delete </Link>
+        </div>
+      </>
+    },
+    {
+      name: 'Title and Location (city and state)',
+      selector: (row:any) => row.TitleandLocation,
+      sortable: true, width: '250px' 
+    },
+    {
+      name : 'Professional Services Year Completed',
+      selector: (row:any) => row.ProfessionalService,
+      sortable: true, width: '270px' 
+    },
+    {
+      name : 'Age PS',
+      selector: (row:any) => row.AgePS,
+      sortable: true, width: '100px' 
+    },
+    {
+      name : 'Ongoing (Age PS)',
+      sortable: true, width: '150px' ,
+      cell: (row: any) => (
+        <span style={{ color: row.OngoingCheckedPS ? 'green' : 'red' }}>
+          {row.OngoingCheckedPS ? 'Y' : 'N'}
+        </span>
+      ),
+    },
+    {
+      name : 'N/A (Age PS)',
+      sortable: true, width: '150px' ,
+      cell: (row: any) => (
+        <span style={{ color: row.NACheckedPS ? 'green' : 'red' }}>
+          {row.NACheckedPS ? 'Y' : 'N'}
+        </span>
+      ),
+    },
+    {
+      name : 'Construction Year Completed',
+      selector: (row:any) => row.Construction,
+      sortable: true, width: '270px' 
+    },
+    {
+      name : 'Age CS',
+      selector: (row:any) => row.AgeCS,
+      sortable: true, width: '100px' 
+    },
+    {
+      name : 'Ongoing (Age CS)',
+      sortable: true, width: '150px' ,
+      cell: (row: any) => (
+        <span style={{ color: row.OngoingCheckedCS ? 'green' : 'red' }}>
+          {row.OngoingCheckedCS ? 'Y' : 'N'}
+        </span>
+      ),
+    },
+    {
+      name : 'N/A (Age CS)',
+      sortable: true, width: '150px' ,
+      cell: (row: any) => (
+        <span style={{ color: row.NACheckedCS ? 'green' : 'red' }}>
+          {row.NACheckedCS ? 'Y' : 'N'}
+        </span>
+      ),
+    },
+    {
+      name: 'Role',
+      selector: (row:any) => row.Role,
+      sortable: true, width: '150px' ,
+    },
+    {
+      name: 'Description and Specific Role',
+      selector: (row:any) => row.Description,
+      sortable: true, width: '150px' ,
+    },
+    {
+      name: 'Project Value',
+      selector: (row:any) => row.ProjectValue,
+      sortable: true, width: '150px' ,
+    },
+    {
+      name: 'Performed with Current Firm',
+      sortable: true, width: '200px' ,
+      cell: (row:any)=>(
+        <span style={{color: row.Checked ? 'green': 'red'}}>
+          {row.Checked? 'Y': 'N'}
+        </span>
+      ),
+    },
+    {
+      name: 'Keyword 1',
+      selector: (row:any) => row.Keyword1,
+      sortable: true, width: '150px' ,
+    },
+    {
+      name: 'Keyword 2',
+      selector: (row:any) => row.Keyword2,
+      sortable: true, width: '150px' ,
+    },
+    {
+      name: 'Keyword 3',
+      selector: (row:any) => row.Keyword3,
+      sortable: true, width: '150px' ,
+    },
+    {
+      name: 'Keyword 4',
+      selector: (row:any) => row.Keyword4,
+      sortable: true, width: '150px' ,
+    },
+    {
+      name: 'Keyword 5',
+      selector: (row:any) => row.Keyword5,
+      sortable: true, width: '150px' ,
+    },
+    {
+      name: 'Keyword 6',
+      selector: (row:any) => row.Keyword6,
+      sortable: true, width: '150px' ,
+    },
+    {
+      name: 'Keyword 7',
+      selector: (row:any) => row.Keyword7,
+      sortable: true, width: '150px' ,
+    },
+    {
+      name: 'Keyword 8',
+      selector: (row:any) => row.Keyword8,
+      sortable: true, width: '150px' ,
+    },
+    {
+      name: 'Keyword 9',
+      selector: (row:any) => row.Keyword9,
+      sortable: true, width: '150px' ,
+    },
+    {
+      name: 'Keyword 10',
+      selector: (row:any) => row.Keyword10,
+      sortable: true, width: '150px' ,
+    },
+  ];
 return (
   <>
     <div className='content-wrapper'>
@@ -15,7 +226,7 @@ return (
         <div className='col-md-12'>
           <div className='panel panel-default'>
             <div className='panel-body'>
-              <div className='row'> {/* Use row to wrap the input fields */}
+              <div className='row'> 
                 <div className='col-md-4 px-2'>
                   <div className='mb-3'>
                     <label className='form-label'>Name <span className='text-danger'>*</span></label>
@@ -26,6 +237,8 @@ return (
                       name='userName'
                       required
                       aria-label='Employee Name'
+                      value={value.Name}
+                      onChange={handleChange}
                     />
                   </div>
                 </div>
@@ -39,6 +252,8 @@ return (
                       name='titleRole'
                       required
                       aria-label='Employee Title or Role'
+                      value={value.TitleRole}
+                      onChange={handleChange}
                     />
                   </div>
                 </div>
@@ -52,6 +267,8 @@ return (
                       name='companyLocation'
                       required
                       aria-label='Company and Location'
+                      value={value.CompanyLocation}
+                      onChange={handleChange}
                     />
                   </div>
                 </div>
@@ -66,6 +283,8 @@ return (
                       style={{ resize: 'none' }}
                       required
                       aria-label='Education or Degree '
+                      value={value.Education}
+                      onChange={handleChange}
                     />
                   </div>
                 </div>
@@ -79,7 +298,9 @@ return (
                       rows= {3}
                       style={{ resize: 'none' }}
                       required
-                      aria-label='Certifications and Licenses  '
+                      aria-label='Certifications and Licenses'
+                      value={value.CertificatesLicenses}
+                      onChange={handleChange}
                     />
                   </div>
                 </div>
@@ -93,7 +314,9 @@ return (
                       rows= {3}
                       style={{ resize: 'none' }}
                       required
-                      aria-label='Other Professional Qualifications  '
+                      aria-label='Other Professional Qualifications'
+                      value={value.OtherQualification}
+                      onChange={handleChange}
                     />
                   </div>
                 </div>
@@ -106,7 +329,9 @@ return (
                       id='workStartYear'
                       name='workStartYear'
                       required
-                      aria-label='work StartYear  '
+                      aria-label='work StartYear'
+                      value={value.WorkStartYear}
+                      onChange={handleChange}
                     />
                   </div>
                 </div>
@@ -118,7 +343,9 @@ return (
                       className='form-control'
                       id='workEndYear'
                       name='workEndYear'
-                      aria-label='work endYear  '
+                      aria-label='work endYear'
+                      value={value.WorkEndYear}
+                      onChange={handleChange}
                     />
                   </div>
                 </div>
@@ -133,6 +360,8 @@ return (
                         id='isPresent'
                         aria-label='Is Present'
                         style={{ width: '25px', height: '25px' }} 
+                        value={value.WorkEndPresent}
+                        onChange={handleChange}
                       />
                      
                     </div>
@@ -161,7 +390,9 @@ return (
                       id='atiStartYear'
                       name='atiStartYear'
                       required
-                      aria-label='ati StartYear  '
+                      aria-label='ati StartYear'
+                      value={value.ATIStartYear}
+                      onChange={handleChange}
                     />
                   </div>
                 </div>
@@ -175,6 +406,8 @@ return (
                       name='atiEndYear'
                       aria-label='ati endYear  '
                       placeholder='' 
+                      value={value.ATIEndYear}
+                      onChange={handleChange}
                     />
                   </div>
                 </div>
@@ -208,7 +441,7 @@ return (
                     />
                   </div>
                 </div>
-                <div className='col-md-4 px-2'>
+                {/* <div className='col-md-4 px-2'>
                   <div className='mb-3'>
                     <label className='form-label'>Client Name <span className='text-danger'>*</span></label>
                     <input
@@ -258,7 +491,7 @@ return (
                       accept='image/*' 
                     />
                   </div>
-                </div>
+                </div> */}
               </div>          
             </div>
           </div>
@@ -266,7 +499,16 @@ return (
             <h3 className=''>Projects</h3>
             <a type='button' className='btn btn-primary btn-user' data-toggle="modal" data-target="#addProjectModal" onClick={handleShow}>Add Project</a>
           </div>         
-          <div className='panel panel-default'></div>
+          <div className='panel panel-default'>
+          <DataTable
+              columns={columns}
+              data={projectList}
+              // progressPending={loading}
+              pagination
+              highlightOnHover
+              responsive
+            />
+          </div>
         </div>
       </form>
     </div>

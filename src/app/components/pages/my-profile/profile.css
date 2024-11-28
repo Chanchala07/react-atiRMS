@@ -30,3 +30,34 @@
     background-color: #f05050;
     border-color: transparent;
 }
+.btn-close{
+    float: right;
+}
+.bg-purple{
+    background-color: #6357ae;
+    border-color: #6357ae;
+}
+.btn-change-pwd{
+    font-size: 13px;
+    border: transparent;
+}
+.btns{
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 13px;
+    color: #fff;
+    margin: 1px;
+}
+.table>:not(caption)>*>* {
+    color: #888 !important;
+}
+.btn-user,.btn-user:hover{
+    color: #fff;
+    background-color: #6357ae;
+    border-color: #6357ae;
+    font-size: 13px;
+    border-radius: 50px;
+}
+.fs-12{
+    font-size: 12px;
+}

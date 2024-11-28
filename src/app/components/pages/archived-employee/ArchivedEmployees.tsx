@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react';
-import './employeeList.css';
 import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
 
-const EmployeeList = () => {
+const ArchivedEmployees = () => {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    const listUrl = 'http://ati.eastus.cloudapp.azure.com:5001/api/employee';
+    const listUrl = 'http://ati.eastus.cloudapp.azure.com:5001/api/myprofile/archivedemployee/';
     fetch(listUrl)
       .then(response => {
         if (!response.ok) {
@@ -112,7 +111,7 @@ return (
   <>
     <div className='content-wraper'>
       <div className='heading'>
-        <h3>Active Employees</h3>
+        <h3>Archived Employees</h3>
       </div>
       <div className='row'>
         <div className='col-md-12 col-lg-12'>
@@ -139,5 +138,5 @@ return (
 )
 }
 
-export default EmployeeList
+export default ArchivedEmployees
 

@@ -11,9 +11,34 @@ const Profile = () => {
   const handleHide = () => setShowModal(false);
   const handleShowUser = () => setShowUserModal(true);
   const handleHideUser = () => setShowUserModal(false);
+  const [users, setUsers] = useState<any[]>([]);
+
+  useEffect(()=>{
+    const userList = "http://ati.eastus.cloudapp.azure.com:5001/api/myprofile/1/1";
+    fetch(userList)
+    .then(response =>{
+      if(!response.ok){
+        throw new Error("Failed to fetch api");
+      }
+      return response.json();
+    })
+    .then(json =>{
+      const user_List = json.Response.objUsersList; 
+      setUsers(user_List);
+      console.log(user_List)
+    })
+  },[])
   const tabClick = (tab: string) => {
     setActiveTab(tab);
   };
+  const columns = [
+    {
+      name: 'Name',
+      selector:(row:any) => row.FirstName,
+      sortable: true,
+      width: '200px'
+    }
+  ]
   return (
     <>
       <div className='content-wrapper'>
@@ -103,96 +128,20 @@ const Profile = () => {
                       {/* //For User Details */}
                       {activeTab === 'userDetails' && (
                         <div className='row'>
-                          <table id='userDetails' className='table'>
-                            <thead>
-                              <tr>
-                                <th>Name</th>
-                                <th>User Name</th>
-                                <th>Password</th>
-                                <th>Actions</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td>Dave Mauer</td>
-                                <td>david.mauer@atiinc.com</td>
-                                <td>atiRMS@123</td>
-                                <td>
-                                  <a className='btn btn-info btn-xs btns'>Archive</a>
-                                  <a className='btn btn-danger btn-xs btns'>Change Password</a>
-                                  <a className='btn btn-info btn-xs btns bg-purple' style={{"borderColor":"#6357ae"}}>Edit</a>
-                                  <a className='btn btn-info btn-xs btns'>View Resume</a>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>Dave Mauer</td>
-                                <td>david.mauer@atiinc.com</td>
-                                <td>atiRMS@123</td>
-                                <td>
-                                  <a className='btn btn-info btn-xs btns'>Archive</a>
-                                  <a className='btn btn-danger btn-xs btns'>Change Password</a>
-                                  <a className='btn btn-info btn-xs btns bg-purple' style={{"borderColor":"#6357ae"}}>Edit</a>
-                                  <a className='btn btn-info btn-xs btns'>View Resume</a>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>Dave Mauer</td>
-                                <td>david.mauer@atiinc.com</td>
-                                <td>atiRMS@123</td>
-                                <td>
-                                  <a className='btn btn-info btn-xs btns'>Archive</a>
-                                  <a className='btn btn-danger btn-xs btns'>Change Password</a>
-                                  <a className='btn btn-info btn-xs btns bg-purple' style={{"borderColor":"#6357ae"}}>Edit</a>
-                                  <a className='btn btn-info btn-xs btns'>View Resume</a>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>Dave Mauer</td>
-                                <td>david.mauer@atiinc.com</td>
-                                <td>atiRMS@123</td>
-                                <td>
-                                  <a className='btn btn-info btn-xs btns'>Archive</a>
-                                  <a className='btn btn-danger btn-xs btns'>Change Password</a>
-                                  <a className='btn btn-info btn-xs btns bg-purple' style={{"borderColor":"#6357ae"}}>Edit</a>
-                                  <a className='btn btn-info btn-xs btns'>View Resume</a>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>Dave Mauer</td>
-                                <td>david.mauer@atiinc.com</td>
-                                <td>atiRMS@123</td>
-                                <td>
-                                  <a className='btn btn-info btn-xs btns'>Archive</a>
-                                  <a className='btn btn-danger btn-xs btns'>Change Password</a>
-                                  <a className='btn btn-info btn-xs btns bg-purple' style={{"borderColor":"#6357ae"}}>Edit</a>
-                                  <a className='btn btn-info btn-xs btns'>View Resume</a>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>Dave Mauer</td>
-                                <td>david.mauer@atiinc.com</td>
-                                <td>atiRMS@123</td>
-                                <td>
-                                  <a className='btn btn-info btn-xs btns'>Archive</a>
-                                  <a className='btn btn-danger btn-xs btns'>Change Password</a>
-                                  <a className='btn btn-info btn-xs btns bg-purple' style={{"borderColor":"#6357ae"}}>Edit</a>
-                                  <a className='btn btn-info btn-xs btns'>View Resume</a>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>Dave Mauer</td>
-                                <td>david.mauer@atiinc.com</td>
-                                <td>atiRMS@123</td>
-                                <td>
-                                  <a className='btn btn-info btn-xs btns'>Archive</a>
-                                  <a className='btn btn-danger btn-xs btns'>Change Password</a>
-                                  <a className='btn btn-info btn-xs btns bg-purple' style={{"borderColor":"#6357ae"}}>Edit</a>
-                                  <a className='btn btn-info btn-xs btns'>View Resume</a>
-                                </td>
-                              </tr>
-
-                            </tbody>
-                          </table>
+                          <div className='col-md-12 col-lg-12'>
+                            <div className='panel'>
+                              <div className='panel-body'>
+                                <DataTable
+                                  columns={columns}
+                                  data={users}
+                                  //progressPending={loading}
+                                  pagination
+                                  highlightOnHover
+                                  responsive
+                                />
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       )}
                       

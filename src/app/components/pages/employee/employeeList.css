@@ -15,3 +15,11 @@
     border-top-width: 3px;
     border: 1px solid #cfdbe2;
 }
+.fs-20{
+    font-size: 20px;
+}
+.filter{
+    padding: 5px;
+    width: 45%;
+    border: 1px solid #aaa;
+}

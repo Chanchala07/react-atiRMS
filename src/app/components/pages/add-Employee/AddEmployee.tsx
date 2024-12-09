@@ -25,6 +25,8 @@ const AddEmployee = () => {
   const [showModal, setShowModal ] = useState(false);
   const handleShow = () => setShowModal(true);
   const handleHide = () => setShowModal(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [filteredProjectByEmployees, setFilteredProjectByEmployees] = useState<any[]>([]);
 
   useEffect(() => {
     if(id){
@@ -52,7 +54,9 @@ const AddEmployee = () => {
           }));
           const pro_list = data.Response.proejctList || [];
           setProjectList(pro_list);
-          console.log('Project List:', pro_list);
+          setFilteredProjectByEmployees(pro_list);
+          console.log("project for filter",pro_list)
+          
         }
       })
       .catch(error => {
@@ -62,14 +66,47 @@ const AddEmployee = () => {
     
   }, []);
 
+  useEffect(() => {
+    const filtered = projectList.filter((project) => {
+      return (
+        (project.TitleandLocation?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (project.ProfessionalService?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (String(project.Checked).toLowerCase() || "").includes(searchQuery.toLowerCase()) || 
+        (project.Role?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (String(project.OngoingCheckedPS).toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (String(project.NACheckedPS).toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (project.AgePS?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (project.Construction?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (String(project.OngoingCheckedCS).toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (String(project.NACheckedCS).toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (project.AgeCS?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (project.ProjectValue?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (project.Description?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (project.Keyword1?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (project.Keyword2?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (project.Keyword3?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (project.Keyword4?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (project.Keyword5?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (project.Keyword6?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (project.Keyword7?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (project.Keyword8?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (project.Keyword9?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (project.Keyword10?.toLowerCase() || "").includes(searchQuery.toLowerCase())
+      );
+    });
+    setFilteredProjectByEmployees(filtered);
+  }, [searchQuery, projectList])
+
   const handleChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
     setValue((prev) => ({
       ...prev,
-      [name]: value, // Update the specific field in the state object
+      [name]: value, 
     }));
   };
-
+  const handleSearch = (e:any) =>{
+    setSearchQuery(e.target.value);
+  }
   const columns = [
     {
       name: 'Actions',
@@ -144,12 +181,12 @@ const AddEmployee = () => {
     {
       name: 'Role',
       selector: (row:any) => row.Role,
-      sortable: true, width: '150px' ,
+      sortable: true, width: '200px' ,
     },
     {
       name: 'Description and Specific Role',
       selector: (row:any) => row.Description,
-      sortable: true, width: '150px' ,
+      sortable: true, width: '420px' ,
     },
     {
       name: 'Project Value',
@@ -496,13 +533,19 @@ return (
             </div>
           </div>
           <div className='d-flex justify-content-between align-items-center'>
-            <h3 className=''>Projects</h3>
+            <h3 className='mt-2 color-grey'>Projects</h3>
             <a type='button' className='btn btn-primary btn-user' data-toggle="modal" data-target="#addProjectModal" onClick={handleShow}>Add Project</a>
           </div>         
           <div className='panel panel-default'>
+            <input className='filter'
+              type='text'
+              placeholder='Search'
+              value={searchQuery}
+              onChange={handleSearch}
+            /> 
           <DataTable
               columns={columns}
-              data={projectList}
+              data={filteredProjectByEmployees}
               // progressPending={loading}
               pagination
               highlightOnHover

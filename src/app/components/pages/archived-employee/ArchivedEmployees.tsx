@@ -47,7 +47,7 @@ const columns = [
   {
     name: 'Actions',
     cell: (row: Employee) => <Link to={`/home-page/add-employee/${row.Id}`}
-      className='btn btn-primary btn-sm' style={{ background: "#23b7e5", border: "none" }}>View or Edit</Link>,
+      className='btn btn-primary btn-sm bg-blue'>View or Edit</Link>,
     ignoreRowClick: true,
     allowOverflow: true,
     button: true,

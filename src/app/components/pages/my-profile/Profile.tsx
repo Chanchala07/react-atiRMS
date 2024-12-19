@@ -1,7 +1,13 @@
 import { SetStateAction, useEffect, useState } from 'react';
 import './profile.css';
-import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
+import { DataTable, DataTableFilterMeta } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Button } from 'primereact/button';
+import { InputText } from 'primereact/inputtext';
+import { IconField } from 'primereact/iconfield';
+import { InputIcon } from 'primereact/inputicon';
+import { FilterMatchMode, FilterOperator } from 'primereact/api';
 
 const Profile = () => {
   const [showModal, setShowModal] = useState(false);
@@ -12,6 +18,13 @@ const Profile = () => {
   const handleShowUser = () => setShowUserModal(true);
   const handleHideUser = () => setShowUserModal(false);
   const [users, setUsers] = useState<any[]>([]);
+  const [filters, setFilters] = useState<DataTableFilterMeta>({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    FirstName: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    UserName: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    UserPassword: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+  });
+  const [globalFilterValue, setGlobalFilterValue] = useState<string>('');
 
   useEffect(()=>{
     const userList = "http://ati.eastus.cloudapp.azure.com:5001/api/myprofile/1/1";
@@ -26,19 +39,35 @@ const Profile = () => {
       const user_List = json.Response.objUsersList; 
       setUsers(user_List);
       console.log(user_List)
-    })
+    });
+   
   },[])
   const tabClick = (tab: string) => {
     setActiveTab(tab);
   };
-  const columns = [
-    {
-      name: 'Name',
-      selector:(row:any) => row.FirstName,
-      sortable: true,
-      width: '200px'
-    }
-  ]
+  const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    let _filters = { ...filters };
+
+    // @ts-ignore
+    _filters['global'].value = value;
+
+    setFilters(_filters);
+    setGlobalFilterValue(value);
+};
+
+  const renderHeader = () => {
+    return (
+      <div className="flex justify-content-between">        
+        <IconField iconPosition="left">
+          <InputIcon className="pi pi-search" />
+          <InputText value={globalFilterValue} onChange={onGlobalFilterChange}  placeholder="Search" />
+        </IconField>
+      </div>
+    );
+  };
+  
+  const header = renderHeader();
   return (
     <>
       <div className='content-wrapper'>
@@ -131,14 +160,15 @@ const Profile = () => {
                           <div className='col-md-12 col-lg-12'>
                             <div className='panel'>
                               <div className='panel-body'>
-                                <DataTable
-                                  columns={columns}
-                                  data={users}
-                                  //progressPending={loading}
-                                  pagination
-                                  highlightOnHover
-                                  responsive
-                                />
+                               <DataTable value={users} paginator showGridlines rows={10} header={header} filters={filters}
+                                globalFilterFields={['FirstName', 'UserName', 'UserPassword']}
+                                emptyMessage="No matching records found" onFilter={(e) => setFilters(e.filters)}>
+
+                                <Column field='FirstName' header="Name" filter/>                              
+                                <Column field='UserName' header="Username" filter/>                               
+                                <Column field='UserPassword' header="Password" filter/>                              
+                                <Column field='' header="Actions" />                               
+                               </DataTable>
                               </div>
                             </div>
                           </div>

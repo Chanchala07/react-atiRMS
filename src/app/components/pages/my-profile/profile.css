@@ -33,7 +33,7 @@
 .btn-close{
     float: right;
 }
-.bg-purple{
+.bg-purple,.bg-purple:hover{
     background-color: #6357ae;
     border-color: #6357ae;
 }
@@ -60,4 +60,12 @@
 }
 .fs-12{
     font-size: 12px;
+}
+.bg-blue,.bg-blue:hover{
+    background-color: #23b7e5;
+    border:none;
+}
+.bg-red,.bg-red:hover{
+    background-color: #f05050;
+    border:none;
 }

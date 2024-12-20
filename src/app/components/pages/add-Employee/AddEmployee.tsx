@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react';
 import './addEmployee.css';
 import { json } from 'stream/consumers';
-import DataTable from 'react-data-table-component';
 import { Link, useParams } from 'react-router-dom';
+import { DataTable, DataTableFilterMeta } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { InputText } from 'primereact/inputtext';
+import { IconField } from 'primereact/iconfield';
+import { InputIcon } from 'primereact/inputicon';
+import { FilterMatchMode, FilterOperator } from 'primereact/api';
+import ExpandableText from '../Exapnd/ExpandableText';
 
 const AddEmployee = () => {
   const [value, setValue] = useState({
@@ -25,8 +31,34 @@ const AddEmployee = () => {
   const [showModal, setShowModal ] = useState(false);
   const handleShow = () => setShowModal(true);
   const handleHide = () => setShowModal(false);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [filteredProjectByEmployees, setFilteredProjectByEmployees] = useState<any[]>([]);
+  const [globalFilterValue, setGlobalFilterValue] = useState<string>('');
+  const [filters, setFilters] = useState<DataTableFilterMeta>({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    TitleandLocation: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    ProfessionalService: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    AgePS: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    OngoingCheckedPS: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    NACheckedPS: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    Construction: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    AgeCS: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    OngoingCheckedCS: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    NACheckedCS: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    Role: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    Description: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    ProjectValue: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    Checked: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    Keyword1: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    Keyword2: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    Keyword3: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    Keyword4: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    Keyword5: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    Keyword6: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    Keyword7: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    Keyword8: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    Keyword9: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    Keyword10: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+  });
+ 
 
   useEffect(() => {
     if(id){
@@ -54,7 +86,6 @@ const AddEmployee = () => {
           }));
           const pro_list = data.Response.proejctList || [];
           setProjectList(pro_list);
-          setFilteredProjectByEmployees(pro_list);
           console.log("project for filter",pro_list)
           
         }
@@ -66,36 +97,6 @@ const AddEmployee = () => {
     
   }, []);
 
-  useEffect(() => {
-    const filtered = projectList.filter((project) => {
-      return (
-        (project.TitleandLocation?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-        (project.ProfessionalService?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-        (String(project.Checked).toLowerCase() || "").includes(searchQuery.toLowerCase()) || 
-        (project.Role?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-        (String(project.OngoingCheckedPS).toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-        (String(project.NACheckedPS).toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-        (project.AgePS?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-        (project.Construction?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-        (String(project.OngoingCheckedCS).toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-        (String(project.NACheckedCS).toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-        (project.AgeCS?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-        (project.ProjectValue?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-        (project.Description?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-        (project.Keyword1?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-        (project.Keyword2?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-        (project.Keyword3?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-        (project.Keyword4?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-        (project.Keyword5?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-        (project.Keyword6?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-        (project.Keyword7?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-        (project.Keyword8?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-        (project.Keyword9?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-        (project.Keyword10?.toLowerCase() || "").includes(searchQuery.toLowerCase())
-      );
-    });
-    setFilteredProjectByEmployees(filtered);
-  }, [searchQuery, projectList])
 
   const handleChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
@@ -104,155 +105,28 @@ const AddEmployee = () => {
       [name]: value, 
     }));
   };
-  const handleSearch = (e:any) =>{
-    setSearchQuery(e.target.value);
-  }
-  const columns = [
-    {
-      name: 'Actions',
-      cell: (row: any) => <>
-        <div className='flex flex-column'>
-          <Link to='' className='btn btn-primary btn-sm m-1' style={{ background: "#6357ae", border: "none",padding: "6px 16px" }}> Edit </Link>
-          <Link to='' className='btn btn-primary btn-sm m-1' style={{ background: "#f05050", border: "none" }}> Delete </Link>
-        </div>
-      </>
-    },
-    {
-      name: 'Title and Location (city and state)',
-      selector: (row:any) => row.TitleandLocation,
-      sortable: true, width: '250px' 
-    },
-    {
-      name : 'Professional Services Year Completed',
-      selector: (row:any) => row.ProfessionalService,
-      sortable: true, width: '270px' 
-    },
-    {
-      name : 'Age PS',
-      selector: (row:any) => row.AgePS,
-      sortable: true, width: '100px' 
-    },
-    {
-      name : 'Ongoing (Age PS)',
-      sortable: true, width: '150px' ,
-      cell: (row: any) => (
-        <span style={{ color: row.OngoingCheckedPS ? 'green' : 'red' }}>
-          {row.OngoingCheckedPS ? 'Y' : 'N'}
-        </span>
-      ),
-    },
-    {
-      name : 'N/A (Age PS)',
-      sortable: true, width: '150px' ,
-      cell: (row: any) => (
-        <span style={{ color: row.NACheckedPS ? 'green' : 'red' }}>
-          {row.NACheckedPS ? 'Y' : 'N'}
-        </span>
-      ),
-    },
-    {
-      name : 'Construction Year Completed',
-      selector: (row:any) => row.Construction,
-      sortable: true, width: '270px' 
-    },
-    {
-      name : 'Age CS',
-      selector: (row:any) => row.AgeCS,
-      sortable: true, width: '100px' 
-    },
-    {
-      name : 'Ongoing (Age CS)',
-      sortable: true, width: '150px' ,
-      cell: (row: any) => (
-        <span style={{ color: row.OngoingCheckedCS ? 'green' : 'red' }}>
-          {row.OngoingCheckedCS ? 'Y' : 'N'}
-        </span>
-      ),
-    },
-    {
-      name : 'N/A (Age CS)',
-      sortable: true, width: '150px' ,
-      cell: (row: any) => (
-        <span style={{ color: row.NACheckedCS ? 'green' : 'red' }}>
-          {row.NACheckedCS ? 'Y' : 'N'}
-        </span>
-      ),
-    },
-    {
-      name: 'Role',
-      selector: (row:any) => row.Role,
-      sortable: true, width: '200px' ,
-    },
-    {
-      name: 'Description and Specific Role',
-      selector: (row:any) => row.Description,
-      sortable: true, width: '420px' ,
-    },
-    {
-      name: 'Project Value',
-      selector: (row:any) => row.ProjectValue,
-      sortable: true, width: '150px' ,
-    },
-    {
-      name: 'Performed with Current Firm',
-      sortable: true, width: '200px' ,
-      cell: (row:any)=>(
-        <span style={{color: row.Checked ? 'green': 'red'}}>
-          {row.Checked? 'Y': 'N'}
-        </span>
-      ),
-    },
-    {
-      name: 'Keyword 1',
-      selector: (row:any) => row.Keyword1,
-      sortable: true, width: '150px' ,
-    },
-    {
-      name: 'Keyword 2',
-      selector: (row:any) => row.Keyword2,
-      sortable: true, width: '150px' ,
-    },
-    {
-      name: 'Keyword 3',
-      selector: (row:any) => row.Keyword3,
-      sortable: true, width: '150px' ,
-    },
-    {
-      name: 'Keyword 4',
-      selector: (row:any) => row.Keyword4,
-      sortable: true, width: '150px' ,
-    },
-    {
-      name: 'Keyword 5',
-      selector: (row:any) => row.Keyword5,
-      sortable: true, width: '150px' ,
-    },
-    {
-      name: 'Keyword 6',
-      selector: (row:any) => row.Keyword6,
-      sortable: true, width: '150px' ,
-    },
-    {
-      name: 'Keyword 7',
-      selector: (row:any) => row.Keyword7,
-      sortable: true, width: '150px' ,
-    },
-    {
-      name: 'Keyword 8',
-      selector: (row:any) => row.Keyword8,
-      sortable: true, width: '150px' ,
-    },
-    {
-      name: 'Keyword 9',
-      selector: (row:any) => row.Keyword9,
-      sortable: true, width: '150px' ,
-    },
-    {
-      name: 'Keyword 10',
-      selector: (row:any) => row.Keyword10,
-      sortable: true, width: '150px' ,
-    },
-  ];
+  const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    let _filters = { ...filters };
+  
+    // @ts-ignore
+    _filters['global'].value = value;
+  
+    setFilters(_filters);
+    setGlobalFilterValue(value);
+  };
+  const renderHeader = () => {
+    return (
+      <div className="flex justify-content-between">        
+        <IconField iconPosition="left">
+          <InputIcon className="pi pi-search" />
+          <InputText value={globalFilterValue} onChange={onGlobalFilterChange}  placeholder="Search" />
+        </IconField>
+      </div>
+    );
+  };
+  const header = renderHeader();
+ 
 return (
   <>
     <div className='content-wrapper'>
@@ -537,20 +411,56 @@ return (
             <a type='button' className='btn btn-primary btn-user' data-toggle="modal" data-target="#addProjectModal" onClick={handleShow}>Add Project</a>
           </div>         
           <div className='panel panel-default'>
-            <input className='filter'
-              type='text'
-              placeholder='Search'
-              value={searchQuery}
-              onChange={handleSearch}
-            /> 
-          <DataTable
-              columns={columns}
-              data={filteredProjectByEmployees}
-              // progressPending={loading}
-              pagination
-              highlightOnHover
-              responsive
-            />
+            <DataTable value={projectList}
+              showGridlines
+              rows={5}
+              paginator
+              globalFilterFields={['TitleandLocation','ProfessionalService','AgePS','OngoingCheckedPS',
+                'NACheckedPS','Construction','OngoingCheckedCS','NACheckedCS','Role','Description','ProjectValue',
+                'Checked','Keyword1','Keyword2','Keyword3','Keyword4','Keyword5','Keyword6','Keyword7','Keyword8','Keyword9','Keyword10'
+              ]}
+              header={header}
+              filters={filters}
+              onFilter={(e) => setFilters(e.filters)}>
+              <Column header="Actions"/>
+              <Column header="Title and Location (city and state)" field='TitleandLocation'
+                body={(rowData) => <ExpandableText content={rowData.TitleandLocation} maxLength={30}></ExpandableText>}/>
+              <Column header="Professional Services Year Completed" field='ProfessionalService'/>
+              <Column header="Age PS" field='AgePS'/>
+              <Column header="Ongoing (Age PS)" field='OngoingCheckedPS'/>
+              <Column header="N/A (Age PS)" field='NACheckedPS'/>
+              <Column header="Construction Year Completed" field='Construction'/>
+              <Column header="Age CS" field='AgeCS'/>
+              <Column header="Ongoing (Age PS)" field='OngoingCheckedCS'/>
+              <Column header="N/A (Age PS)" field='NACheckedCS'/>
+              <Column header="Role" field='Role'
+                body={(rowData) => <ExpandableText content={rowData.role} maxLength ={30} ></ExpandableText>}/>
+              <Column header="Description and Specific Role" field='Description'
+                body={(rowData) => <ExpandableText content={rowData.Description} maxLength ={30}></ExpandableText>}
+                />
+              <Column header="Project Value" field='ProjectValue'/>
+              <Column header="Performed with Current Firm" field='Checked'/>
+              <Column header="Keyword 1" field='Keyword1'
+                body={(rowData) => <ExpandableText content={rowData.Keyword1} maxLength ={20}></ExpandableText>}/>
+              <Column header="Keyword 2" field='Keyword2'
+                body={(rowData) => <ExpandableText content={rowData.Keyword2} maxLength ={20}></ExpandableText>}/>
+              <Column header="Keyword 3" field='Keyword3'
+                body={(rowData) => <ExpandableText content={rowData.Keyword3} maxLength ={20}></ExpandableText>}/>
+              <Column header="Keyword 4" field='Keyword4'
+                body={(rowData) => <ExpandableText content={rowData.Keyword4} maxLength ={20}></ExpandableText>}/>
+              <Column header="Keyword 5" field='Keyword5'
+                body={(rowData) => <ExpandableText content={rowData.Keyword5} maxLength ={20}></ExpandableText>}/>
+              <Column header="Keyword 6" field='Keyword6'
+                body={(rowData) => <ExpandableText content={rowData.Keyword6} maxLength ={20}></ExpandableText>}/>
+              <Column header="Keyword 7" field='Keyword7'
+                body={(rowData) => <ExpandableText content={rowData.Keyword7} maxLength ={20}></ExpandableText>}/>
+              <Column header="Keyword 8" field='Keyword8'
+                body={(rowData) => <ExpandableText content={rowData.Keyword8} maxLength ={20}></ExpandableText>}/>
+              <Column header="Keyword 9" field='Keyword9'
+                body={(rowData) => <ExpandableText content={rowData.Keyword9} maxLength ={20}></ExpandableText>}/>
+              <Column header="Keyword 10" field='Keyword10'
+                body={(rowData) => <ExpandableText content={rowData.Keyword10} maxLength ={20}></ExpandableText>}/>
+           </DataTable>
           </div>
         </div>
       </form>

@@ -1,9 +1,15 @@
 import { useEffect, useState } from 'react';
 import './employeeList.css';
-import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
+import { DataTable, DataTableFilterMeta } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { InputText } from 'primereact/inputtext';
+import { IconField } from 'primereact/iconfield';
+import { InputIcon } from 'primereact/inputicon';
+import { FilterMatchMode, FilterOperator } from 'primereact/api';
+import ExpandableText from '../Exapnd/ExpandableText';
 
 interface Employee{
   Id:number
@@ -23,8 +29,21 @@ interface Employee{
 }
 const EmployeeList = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
-  const [filteredEmployees, setFilteredEmployees] = useState<Employee[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState<DataTableFilterMeta>({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    Name: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    TitleRole: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    CompanyLocation: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    WorkStartYear: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    WorkEndYear: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    ATIStartYear: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    ATIEndYear: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    Education: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    CertificatesLicenses: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    OtherQualification: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    ProjectDetails: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+  });
+  const [globalFilterValue, setGlobalFilterValue] = useState<string>('');
 
   useEffect(() => {
     const listUrl = 'http://ati.eastus.cloudapp.azure.com:5001/api/employee';
@@ -36,8 +55,7 @@ const EmployeeList = () => {
         
         return response.json();
       })
-      .then((json) =>{setEmployees(json.Response);
-        setFilteredEmployees(json.Response);
+      .then((json) =>{setEmployees(json.Response);        
       } )
       .catch(error =>{
         console.log(error,"error")
@@ -45,168 +63,32 @@ const EmployeeList = () => {
 }, []);
 
 // console.log(employees,"employees  ")
-const columns = [
-  //{ name: 'ID', selector:( row:any )=> row.Id, sortable: true },
-  {
-    name: 'Actions',
-    cell: (row: Employee) => <Link to={`/home-page/add-employee/${row.Id}`}
-      className='btn btn-primary btn-sm bg-blue'>View or Edit</Link>,
-    ignoreRowClick: true,
-    allowOverflow: true,
-    button: true,
-  },
-  {
-    name: 'Name',
-    selector: (row: Employee) => row.Name,
-    sortable: true,
-    width: '200px'
-  },
-  {
-    name: 'Title/Role',
-    selector: (row: Employee) => row.TitleRole,
-    sortable: true,
-    width: '420px'
-  },
-  { name: 'Year of Experience', 
-    selector: (row: Employee) => {
-      const workStartYear = new Date(row.WorkStartYear);
-      const workEndYear = row.WorkEndPresent ? new Date() : new Date(row.WorkEndYear);
-      if(!workStartYear || !workEndYear) return '-';
-      let years = workEndYear.getFullYear() - workStartYear.getFullYear();
-      let months = workEndYear.getMonth() - workStartYear.getMonth();
-      if(months < 0){
-        years -= 1;
-        months += 12;
-      }
-      const totalMonths = years * 12 + months;
-      const yearText = years === 1 ? "year" : "years";
-      const monthText = months === 1 ? "month" : "months";
-     {
-        const yearDisplay = years > 0 ? `${years} ${yearText}` : '';
-        const monthDisplay = months > 0 ? `${months} ${monthText} ` : '';
-        const separator = yearDisplay && monthDisplay ? ', ' : '';
-        return `${yearDisplay}${separator}${monthDisplay}` || '-';
-      }
-     
-          
-    },
-    sortable: true, 
-    width: '150px'
-  },
-  { name: 'Year with Employer', 
-    selector: (row: Employee) =>{
-      const atiStartYear = new Date(row.ATIStartYear);
-      const atiEndYear = row.ATiEndPresent ? new Date(): new Date(row.ATIEndYear);
-      if(!atiStartYear || !atiEndYear) return '-';
-      let years = atiEndYear.getFullYear() - atiStartYear.getFullYear();
-      let months = atiEndYear.getMonth() - atiStartYear.getMonth();
-      if(months < 0){
-        years -= 1;
-        months += 12;
-      }
-      const yearText = years === 1 ? "year" : "years";
-      const monthText = months === 1 ? "month" : "months";
-    
-      const yearDisplay = years > 0 ? `${years} ${yearText}` : '';
-          const monthDisplay = months > 0 ? `${months} ${monthText} ` : '';
-          const separator = yearDisplay && monthDisplay ? ', ' : '';
-          return `${yearDisplay}${separator}${monthDisplay}` || '-';
-    }, 
-    sortable: true,
-    width: '170px'
-  },
-  {
-    name: 'Firm Name and Location (city and state)',
-    selector: (row: Employee) => row.CompanyLocation,
-    sortable: true,
-    width: '270px'
-  },
-  {
-    name: 'Education/Degrees',
-    selector: (row: Employee) => row.Education,
-    sortable: true,
-    width: '420px'
-  },
-  {
-    name: 'Certifications/Licenses',
-    selector: (row: Employee) => row.CertificatesLicenses,
-    sortable: true,
-    width: '420px'
-  },
-  {
-    name: 'Other Professional Qualifications',
-    selector: (row: Employee) => row.OtherQualification,
-    sortable: true,
-    width: '420px'
-  },
-  { name: 'Career Start Year', 
-    selector: (row: Employee) => {
-      if(!row.WorkStartYear) return '-';    
-      const getMonth = (new Date(row.WorkStartYear).getMonth() + 1).toString().padStart(2,'0');
-      const getYear = new Date(row.WorkStartYear).getFullYear();
-      return `${getMonth}/${getYear}`; 
-    },   
-    sortable: true,
-    width: '150px'
- },
-  {
-    name: 'Career End Year',
-    selector: (row: Employee) => {
-      const getMonth = (new Date(row.WorkEndYear).getMonth() + 1 ).toString().padStart(2,'0');
-      const getYear = new Date(row.WorkEndYear).getFullYear();
-      if(row.WorkEndPresent)       
-        return row.WorkEndYear ? `${getMonth}/${getYear}` : 'Ongoing';
-      else
-        return row.WorkEndYear ? `${getMonth}/${getYear}` : '-'
-    },
-    sortable: true,
-    width: '150px'
-  },
-  {
-    name: 'ATI/DGI Start Year',
-    selector: (row: Employee) => {
-      if(!row.ATIStartYear) return '-';
-      const getMonth = (new Date(row.ATIStartYear).getMonth() + 1).toString().padStart(2,'0')
-      const getYear = new Date(row.ATIStartYear).getFullYear();
-      return `${getMonth}/${getYear}`;
-    },
-    sortable: true,
-    width: '150px'
-  },
-  {
-    name: 'ATI/DGI End Year',
-    selector: (row: Employee) => {     
-      const getMonth = (new Date(row.ATIEndYear).getMonth() + 1).toString().padStart(2,'0');  
-      const getYear = new Date(row.ATIEndYear).getFullYear();
-      if(row.ATiEndPresent)
-        return row.ATIEndYear ? `${getMonth}/${getYear}` : 'Ongoing';
-      else
-        return row.ATIEndYear ? `${getMonth}/${getYear}` : '-';
-    },
-    sortable: true,
-    width: '150px'
-  }
-  
-];
-const handleSearchInputChange = (text: string) => {
-  setSearchQuery(text);
+const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const value = e.target.value;
+  let _filters = { ...filters };
 
-  const lowerText = text.toLowerCase();
-  const filtered = text === ""
-    ? employees
-    : employees.filter((employee) =>
-        (employee.Name?.toLowerCase() || "").includes(lowerText) ||
-        (employee.TitleRole?.toLowerCase() || "").includes(lowerText) ||
-        (employee.CompanyLocation?.toLowerCase() || "").includes(lowerText) ||
-        (employee.Education?.toLowerCase() || "").includes(lowerText) ||
-        (employee.CertificatesLicenses?.toLowerCase() || "").includes(lowerText) ||
-        (employee.OtherQualification?.toLowerCase() || "").includes(lowerText)
-      );
+  // @ts-ignore
+  _filters['global'].value = value;
 
-  setFilteredEmployees(filtered);
-  //console.log("Filtered Employees:", filtered);
+  setFilters(_filters);
+  setGlobalFilterValue(value);
 };
 
+const renderHeader = () => {
+  return (
+    <div className="flex justify-content-between">        
+      <IconField iconPosition="left">
+        <InputIcon className="pi pi-search" />
+        <InputText value={globalFilterValue} onChange={onGlobalFilterChange}  placeholder="Search" />
+      </IconField>
+    </div>
+  );
+};
+const formateDate = (dateString: string | number | Date) => {
+  const date = new Date(dateString);
+  return `${(date.getMonth()+1).toString().padStart(2,"0")} / ${date.getFullYear()}`
+}
+const header = renderHeader();
 return (
   <>
     <div className='content-wraper'>
@@ -224,20 +106,49 @@ return (
         <div className='col-md-12 col-lg-12'>
           <div className='panel'>
             <div className='panel-body'>
-              <input className='filter'
-                type='text'
-                placeholder='Search'
-                onChange={(e) => handleSearchInputChange(e.target.value)}
-                value={searchQuery}
-              />
-              <DataTable
-                columns={columns}
-                data={filteredEmployees}
-                //progressPending={loading}
-                pagination
-                highlightOnHover
-                responsive
-              />
+             <DataTable value={employees} paginator showGridlines rows={10} header={header} filters={filters}
+              globalFilterFields={['Name', 'TitleRole', 'CompanyLocation','Education','CertificatesLicenses','OtherQualification','WorkStartYear','WorkEndYear','ATIStartYear','ATIEndYear']}
+              emptyMessage="No matching records found" onFilter={(e) => setFilters(e.filters)}>
+                <Column
+                  header="Actions"
+                  body={(rowData: Employee) => (
+                    <Link
+                      to={`/home-page/add-employee/${rowData.Id}`}
+                      className="btn btn-primary btn-sm bg-blue"                     
+                    >
+                      View or Edit
+                    </Link>
+                  )}
+                />
+              <Column header="Name" field='Name' sortable style={{ width: '20%' }}
+               body={(rowData) => <ExpandableText content={rowData.Name} maxLength ={20}></ExpandableText>}/>
+
+              <Column header="Title/Role" field='TitleRole' sortable style={{ width: '20%' }}
+              body={(rowData) => <ExpandableText content={rowData.TitleRole} maxLength ={20}></ExpandableText>}/>
+
+              <Column header="Years of Experience" field='' sortable style={{ width: '20%' }}/>
+              <Column header="Years with Employer" field='' sortable style={{ width: '20%' }}/>
+              <Column header="Firm Name and Location (city and state)" sortable field='CompanyLocation' style={{ width: '20%' }}
+              body={(rowData) => <ExpandableText content={rowData.CompanyLocation} maxLength ={20}></ExpandableText>}/>
+
+              <Column header="Education/Degrees" field='Education' sortable style={{ width: '20%' }}
+              body={(rowData) => <ExpandableText content={rowData.Education} maxLength ={20}></ExpandableText>}/>
+
+              <Column header="Certifications and Licenses" field='CertificatesLicenses' sortable style={{ width: '20%' }}
+              body={(rowData) => <ExpandableText content={rowData.CertificatesLicenses} maxLength ={20}></ExpandableText>}/>
+
+              <Column header="Other Professional Qualifications" field='OtherQualification' sortable style={{ width: '20%' }}
+              body={(rowData) => <ExpandableText content={rowData.OtherQualification} maxLength ={20}></ExpandableText>}/>
+
+              <Column header="Career Start Year" field='WorkStartYear' sortable style={{ width: '20%' }}
+              body={(rowData) => formateDate(rowData.WorkStartYear)}/>
+              <Column header="Career End Year" field='WorkEndYear' sortable style={{ width: '20%' }}
+              body={(rowData) => formateDate(rowData.WorkEndYear)}/>
+              <Column header="ATI/DGI Start Year" field='ATIStartYear' sortable style={{ width: '20%' }}
+              body={(rowData) => formateDate(rowData.ATIStartYear)}/>
+              <Column header="ATI/DGI End Year" field='ATIEndYear' sortable style={{ width: '20%' }}
+              body={(rowData) => formateDate(rowData.ATIEndYear)}/>
+             </DataTable>            
             </div>
           </div>
         </div>

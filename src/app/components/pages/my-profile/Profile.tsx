@@ -157,20 +157,16 @@ const Profile = () => {
                       {/* //For User Details */}
                       {activeTab === 'userDetails' && (
                         <div className='row'>
-                          <div className='col-md-12 col-lg-12'>
-                            <div className='panel'>
-                              <div className='panel-body'>
+                          <div className='col-md-12 col-lg-12'>                           
                                <DataTable value={users} paginator showGridlines rows={10} header={header} filters={filters}
                                 globalFilterFields={['FirstName', 'UserName', 'UserPassword']}
                                 emptyMessage="No matching records found" onFilter={(e) => setFilters(e.filters)}>
 
-                                <Column field='FirstName' header="Name" filter/>                              
-                                <Column field='UserName' header="Username" filter/>                               
-                                <Column field='UserPassword' header="Password" filter/>                              
+                                <Column field='FirstName' header="Name"  sortable />                              
+                                <Column field='UserName' header="Username" sortable/>                               
+                                <Column field='UserPassword' header="Password" sortable/>                              
                                 <Column field='' header="Actions" />                               
-                               </DataTable>
-                              </div>
-                            </div>
+                               </DataTable>                    
                           </div>
                         </div>
                       )}

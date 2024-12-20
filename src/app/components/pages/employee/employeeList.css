@@ -23,3 +23,6 @@
     width: 45%;
     border: 1px solid #aaa;
 }
+.p-column-header-content{
+    white-space: nowrap;
+}

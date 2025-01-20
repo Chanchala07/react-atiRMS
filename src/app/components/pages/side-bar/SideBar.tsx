@@ -24,7 +24,7 @@ const SideBar = () => {
                 className={`w3-sidebar w3-bar-block w3-card w3-animate-left ${isSidebarOpen ? 'open' : 'closed'}`}
                 style={{
                     display: 'block',
-                    width: isSidebarOpen ? '220px' : '70px',
+                    width: isSidebarOpen ? '16%' : '70px',
                 }}
                 id="mySidebar"
             >

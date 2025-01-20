@@ -157,46 +157,46 @@ return (
                   body={(rowData: Employee) => (
                     <Link
                       to={`/home-page/add-employee/${rowData.Id}`}
-                      className="btn btn-primary btn-sm bg-blue"                     
+                      className="btn btn-view bg-blue"  style={{minWidth: "90px"}}                   
                     >
                       View or Edit
                     </Link>
                   )}
                 />
-              <Column header="Name" field='Name' sortable style={{ width: '20%' }}
+              <Column header="Name" field='Name' sortable className='width_desc_name'
                body={(rowData) => <ExpandableText content={rowData.Name} maxLength ={30}></ExpandableText>}/>
 
-              <Column header="Title/Role" field='TitleRole' sortable 
+              <Column header="Title/Role" field='TitleRole' sortable className='width_desc'
               body={(rowData) => <ExpandableText content={rowData.TitleRole} maxLength ={30}></ExpandableText>}/>
 
-              <Column header="Years of Experience" field='' sortable style={{ width: '20%' }}
+              <Column header="Years of Experience" field='' sortable 
               body={(rowData) => calculateYearExperience(rowData,'WorkStartYear','WorkEndYear','WorkEndPresent')}/>
 
-              <Column header="Years with Employer" field='' sortable style={{ width: '20%' }}
+              <Column header="Years with Employer" field='' sortable 
               body={(rowData) => calculateYearExperience(rowData,'ATIStartYear','ATIEndYear','ATiEndPresent')}/>
 
-              <Column header="Firm Name and Location (city and state)" sortable field='CompanyLocation' style={{ width: '20%' }}
+              <Column header="Firm Name and Location (city and state)" sortable field='CompanyLocation'  className='width_desc'
               body={(rowData) => <ExpandableText content={rowData.CompanyLocation} maxLength ={30}></ExpandableText>}/>
 
-              <Column header="Education/Degrees" field='Education' sortable style={{ width: '20%' }}
+              <Column header="Education/Degrees" field='Education' sortable  className='width_desc'
               body={(rowData) => <ExpandableText content={rowData.Education} maxLength ={30}></ExpandableText>}/>
 
-              <Column header="Certifications and Licenses" field='CertificatesLicenses' sortable style={{ width: '20%' }}
+              <Column header="Certifications and Licenses" field='CertificatesLicenses' sortable   className='width_desc'
               body={(rowData) => <ExpandableText content={rowData.CertificatesLicenses} maxLength ={30}></ExpandableText>}/>
 
-              <Column header="Other Professional Qualifications" field='OtherQualification' sortable style={{ width: '20%' }}
+              <Column header="Other Professional Qualifications" field='OtherQualification' sortable  className='width_desc'
               body={(rowData) => <ExpandableText content={rowData.OtherQualification} maxLength ={30}></ExpandableText>}/>
 
-              <Column header="Career Start Year" field='WorkStartYear' sortable style={{ width: '20%' }}
+              <Column header="Career Start Year" field='WorkStartYear' sortable 
               body={(rowData) => formateDate(rowData.WorkStartYear)}/>
 
-              <Column header="Career End Year" field='WorkEndYear' sortable style={{ width: '20%' }}
+              <Column header="Career End Year" field='WorkEndYear' sortable 
               body={(rowData) => dateOngoing(rowData, 'WorkEndPresent', 'WorkEndYear')} />
 
-              <Column header="ATI/DGI Start Year" field='ATIStartYear' sortable style={{ width: '20%' }}
+              <Column header="ATI/DGI Start Year" field='ATIStartYear' sortable 
               body={(rowData) => formateDate(rowData.ATIStartYear)}/>
 
-              <Column header="ATI/DGI End Year" field='ATIEndYear' sortable style={{ width: '20%' }}
+              <Column header="ATI/DGI End Year" field='ATIEndYear' sortable 
               body={(rowData) => dateOngoing(rowData,'ATiEndPresent','ATIEndYear')}/>
 
              </DataTable>            

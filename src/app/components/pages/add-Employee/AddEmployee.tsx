@@ -9,6 +9,7 @@ import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import ExpandableText from '../Exapnd/ExpandableText';
+import AddEditProject from '../../popup/AddEditProject';
 
 const AddEmployee = () => {
   const [value, setValue] = useState({
@@ -20,16 +21,23 @@ const AddEmployee = () => {
     OtherQualification: '',
     WorkStartYear: '',
     WorkEndYear: '',
-    WorkEndPresent: '',
+    WorkEndPresent: false,
     ATIStartYear: '',
     ATIEndYear: '',
-    ATiEndPresent: '', 
+    ATiEndPresent: false, 
   
   });
   const [projectList, setProjectList] = useState<any[]>([]); 
   const {id} = useParams<{id: string}>();
   const [showModal, setShowModal ] = useState(false);
-  const handleShow = () => setShowModal(true);
+  const [projectData, setProjectData ] = useState({});
+
+  const handleShow = (data:any) => {
+    console.log(data,"data data")
+    setShowModal(true);
+    setProjectData(data)
+
+  }
   const handleHide = () => setShowModal(false);
   const [globalFilterValue, setGlobalFilterValue] = useState<string>('');
   const [filters, setFilters] = useState<DataTableFilterMeta>({
@@ -103,6 +111,8 @@ const AddEmployee = () => {
     setValue((prev) => ({
       ...prev,
       [name]: value, 
+      
+
     }));
   };
   const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -271,8 +281,13 @@ return (
                         id='isPresent'
                         aria-label='Is Present'
                         style={{ width: '25px', height: '25px' }} 
-                        value={value.WorkEndPresent}
-                        onChange={handleChange}
+                        checked={value.WorkEndPresent}
+                        onChange={(e) =>
+                          setValue((prev) => ({
+                            ...prev,
+                            WorkEndPresent: e.target.checked, 
+                          }))
+                        }
                       />
                      
                     </div>
@@ -333,8 +348,14 @@ return (
                         id='atiIsPresent'
                         aria-label='Is Present'
                         style={{ width: '25px', height: '25px' }} 
-                      />
-                     
+                        checked={value.ATiEndPresent}
+                        onChange={(e) =>
+                          setValue((prev) => ({
+                            ...prev,
+                            ATiEndPresent: e.target.checked, 
+                          }))
+                        }
+                      />                     
                     </div>
                   </div>
                 </div>
@@ -408,7 +429,7 @@ return (
           </div>
           <div className='d-flex justify-content-between align-items-center'>
             <h3 className='mt-2 color-grey'>Projects</h3>
-            <a type='button' className='btn btn-primary btn-user' data-toggle="modal" data-target="#addProjectModal" onClick={handleShow}>Add Project</a>
+            <a type='button' className='btn btn-primary btn-user' data-bs-toggle="modal" data-bs-target="#addProjectModal" >Add Project</a>
           </div>         
           <div className='panel panel-default'>
             <DataTable value={projectList}
@@ -422,321 +443,77 @@ return (
               header={header}
               filters={filters}
               onFilter={(e) => setFilters(e.filters)}>
-              <Column header="Actions"/>
-              <Column header="Title and Location (city and state)" field='TitleandLocation'
+              <Column header="Actions"
+              body={(rowData) => <div><Link to='' 
+                className='btn btn-primary btn-sm bg-purple m-1' data-toggle="modal" data-target="#addProjectModal" onClick={()=> handleShow(rowData)}>Edit</Link>
+                <Link to='' className='btn btn-primary btn-sm bg-red m-1'>Delete</Link></div>
+              }/>
+
+              <Column header="Title and Location (city and state)" field='TitleandLocation' sortable
                 body={(rowData) => <ExpandableText content={rowData.TitleandLocation} maxLength={30}></ExpandableText>}/>
-              <Column header="Professional Services Year Completed" field='ProfessionalService'/>
-              <Column header="Age PS" field='AgePS'/>
-              <Column header="Ongoing (Age PS)" field='OngoingCheckedPS'/>
-              <Column header="N/A (Age PS)" field='NACheckedPS'/>
-              <Column header="Construction Year Completed" field='Construction'/>
-              <Column header="Age CS" field='AgeCS'/>
-              <Column header="Ongoing (Age PS)" field='OngoingCheckedCS'/>
-              <Column header="N/A (Age PS)" field='NACheckedCS'/>
-              <Column header="Role" field='Role'
+              <Column header="Professional Services Year Completed" field='ProfessionalService' sortable/>
+              <Column header="Age PS" field='AgePS' sortable/>
+              <Column header="Ongoing (Age PS)" field ='OngoingCheckedPS' 
+              body={(rowData) => rowData.OngoingCheckedPS ? 
+                <span className='color-green'>Y</span> : <span className='color-red'>N</span>
+              } 
+              sortable 
+                />
+              <Column header="N/A (Age PS)" field='NACheckedPS' 
+              body={(rowData) => rowData.NACheckedPS ?  <span className='color-green'>Y</span> : <span className='color-red'>N</span>}
+              sortable/>
+
+              <Column header="Construction Year Completed" field='Construction' sortable/>
+              <Column header="Age CS" field='AgeCS' sortable/>
+              <Column header="Ongoing (Age CS)" field='OngoingCheckedCS' sortable
+              body={(rowData) => rowData.OngoingCheckedCS ? <span className='color-green'>Y</span> : <span className='color-red'>N</span>}/>
+
+              <Column header="N/A (Age CS)" field='NACheckedCS' sortable
+                body={(rowData) => rowData.NACheckedCS ? <span className='color-green'>Y</span> : <span className='color-red'>N</span>}/>
+
+              <Column header="Role" field='Role' sortable
                 body={(rowData) => <ExpandableText content={rowData.role} maxLength ={30} ></ExpandableText>}/>
-              <Column header="Description and Specific Role" field='Description'
+              <Column header="Description and Specific Role" field='Description' sortable
                 body={(rowData) => <ExpandableText content={rowData.Description} maxLength ={30}></ExpandableText>}
                 />
-              <Column header="Project Value" field='ProjectValue'/>
-              <Column header="Performed with Current Firm" field='Checked'/>
-              <Column header="Keyword 1" field='Keyword1'
+              <Column header="Project Value" field='ProjectValue' sortable/>
+              <Column header="Performed with Current Firm" field='Checked' sortable
+                body={(rowData) => rowData.Checked ? <span className='color-green'>Y</span> : <span className='color-red'>N</span>}/>
+              <Column header="Keyword 1" field='Keyword1' sortable
                 body={(rowData) => <ExpandableText content={rowData.Keyword1} maxLength ={20}></ExpandableText>}/>
-              <Column header="Keyword 2" field='Keyword2'
+              <Column header="Keyword 2" field='Keyword2' sortable
                 body={(rowData) => <ExpandableText content={rowData.Keyword2} maxLength ={20}></ExpandableText>}/>
-              <Column header="Keyword 3" field='Keyword3'
+              <Column header="Keyword 3" field='Keyword3' sortable
                 body={(rowData) => <ExpandableText content={rowData.Keyword3} maxLength ={20}></ExpandableText>}/>
-              <Column header="Keyword 4" field='Keyword4'
+              <Column header="Keyword 4" field='Keyword4' sortable
                 body={(rowData) => <ExpandableText content={rowData.Keyword4} maxLength ={20}></ExpandableText>}/>
-              <Column header="Keyword 5" field='Keyword5'
+              <Column header="Keyword 5" field='Keyword5' sortable
                 body={(rowData) => <ExpandableText content={rowData.Keyword5} maxLength ={20}></ExpandableText>}/>
-              <Column header="Keyword 6" field='Keyword6'
+              <Column header="Keyword 6" field='Keyword6' sortable
                 body={(rowData) => <ExpandableText content={rowData.Keyword6} maxLength ={20}></ExpandableText>}/>
-              <Column header="Keyword 7" field='Keyword7'
+              <Column header="Keyword 7" field='Keyword7' sortable 
                 body={(rowData) => <ExpandableText content={rowData.Keyword7} maxLength ={20}></ExpandableText>}/>
-              <Column header="Keyword 8" field='Keyword8'
+              <Column header="Keyword 8" field='Keyword8' sortable
                 body={(rowData) => <ExpandableText content={rowData.Keyword8} maxLength ={20}></ExpandableText>}/>
-              <Column header="Keyword 9" field='Keyword9'
+              <Column header="Keyword 9" field='Keyword9' sortable
                 body={(rowData) => <ExpandableText content={rowData.Keyword9} maxLength ={20}></ExpandableText>}/>
-              <Column header="Keyword 10" field='Keyword10'
+              <Column header="Keyword 10" field='Keyword10' sortable
                 body={(rowData) => <ExpandableText content={rowData.Keyword10} maxLength ={20}></ExpandableText>}/>
            </DataTable>
           </div>
         </div>
       </form>
+      
+      {showModal && (
+        <AddEditProject
+        data={projectData}  
+        onClose={handleHide} 
+        show={showModal}       
+        />
+      )}
     </div>
 
-    {/*Add Project */}
-    <div className={`modal fade ${showModal ? 'show': ''}`} style={{display:showModal ? 'block': 'none'}} id="addProjectModal" role="dialog" aria-labelledby="addProjectModalLabel" aria-hidden="true">
-      <div className="modal-dialog modal-lg" role="document">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title" id="addProjectModalLabel">Add Project</h5>
-            <button type="button" className="close btn-close" data-dismiss="modal" aria-label="Close">
-              {/* <span aria-hidden="true">&times;</span> */}
-            </button>
-          </div>
-          <div className="modal-body">
-            <div className='row'>           
-              <div className='col-md-4'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>Title and Location (city and state) <span className='text-danger'>*</span></label>
-                  <input
-                    className='form-control'
-                    type='text'
-                    id='proejctList_TitleandLocation'
-                    name='TitleandLocation'
-                    required
-                  />
-                </div>
-              </div>
-              <div className='col-md-4'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>Role <span className='text-danger'>*</span></label>
-                  <input className='form-control'
-                    type='text'
-                    id='proejctList_role'
-                    name='Role'
-                  />
-                </div>
-              </div>     
-              <div className='col-md-4 px-0'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>Check if project performed with current firm</label>
-                  <div className="form-check">
-                      <input
-                        className='form-check-input'
-                        width={"10px"}
-                        type='checkbox'
-                        id='proejctList_checked'                       
-                        style={{ width: '25px', height: '25px' }} 
-                      />                   
-                    </div>
-                </div>
-              </div>
-              <div className='col-md-3'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>Professional Services Year Completed<span className='text-danger'>*</span></label>
-                  <input className='form-control'
-                    type='text'
-                    id='proejctList_professionalService'
-                    name = 'ProfessionalService'
-                  />
-                </div>
-              </div> 
-              <div className='col-md-3'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>Ongoing (Age PS)</label>
-                  <div className='form-check'>
-                    <input 
-                      className='form-check-input'
-                      width={"10px"}
-                      type='checkbox'
-                      id='proejctList_ongoingPS'
-                      style={{ width: '25px', height: '25px' }} 
-                    />
-                  </div>
-                </div>
-              </div> 
-              <div className='col-md-3'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>N/A (Age PS)</label>
-                  <div className='form-check'>
-                    <input 
-                      className='form-check-input'
-                      width={"10px"}
-                      type='checkbox'
-                      id='proejctList_naPS'
-                      style={{ width: '25px', height: '25px' }} 
-                    />
-                  </div>
-                </div>
-              </div> 
-              <div className='col-md-3'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>Age PS</label>
-                  <input className='form-control'
-                    type='text'
-                    id='proejctList_agePS'
-                    name = 'AgePS'
-                    disabled
-                  />
-                </div>
-              </div>  
-              <div className='col-md-3'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>Construction Year Completed<span className='text-danger'>*</span></label>
-                  <input className='form-control'
-                    type='text'
-                    id='proejctList_construction'
-                    name='Construction'
-                  />
-                </div>
-              </div> 
-              <div className='col-md-3'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>Ongoing (Age CS)</label>
-                  <div className='form-check'>
-                    <input className='form-check-input'
-                     width={"10px"}
-                     type='checkbox'
-                     id='proejctList_ongoingCS'
-                     style={{ width: '25px', height: '25px' }} 
-                    />                   
-                  </div>
-                </div>
-              </div>
-              <div className='col-md-3'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>N/A (Age CS)</label>
-                  <div className='form-check'>
-                    <input className='form-check-input'
-                      width={"10px"}
-                      type='checkbox'
-                      id='proejctList_naCS'
-                      style={{ width: '25px', height: '25px' }} 
-                    />                   
-                  </div>
-                </div>
-              </div>
-              <div className='col-md-3'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>Age CS</label>
-                  <input className='form-control'
-                  type='text'
-                  id='proejctList_ageCS'
-                  disabled
-                  />
-                </div>
-              </div> 
-              <div className='col-md-3'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>Project Value</label>
-                  <input className='form-control'
-                    type='number'
-                    id='proejctList_ProjectValue'
-                  />
-                </div>
-              </div>
-              <div className='col-md-12'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>Description and Specific Role <span className='text-danger'>*</span></label>
-                  <textarea className='form-control'
-                    id='proejctList_description'
-                    rows={4}
-                    style={{resize:"none"}}
-                  />              
-                </div>
-              </div>   
-              <div className='col-md-3'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>Keyword 1</label>
-                  <input className='form-control'
-                    id='proejctList_Keyword1'
-                    type='text'
-                    name='Keyword1'
-                  />
-                </div>
-              </div>
-              <div className='col-md-3'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>Keyword 2</label>
-                  <input className='form-control'
-                    id='proejctList_Keyword2'
-                    type='text'
-                    name='Keyword2'
-                  />
-                </div>
-              </div> 
-              <div className='col-md-3'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>Keyword 3</label>
-                  <input className='form-control'
-                    id='proejctList_Keyword3'
-                    type='text'
-                    name='Keyword3'
-                  />
-                </div>
-              </div> 
-              <div className='col-md-3'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>Keyword 4</label>
-                  <input className='form-control'
-                    id='proejctList_Keyword4'
-                    type='text'
-                    name='Keyword4'
-                  />
-                </div>
-              </div> 
-              <div className='col-md-3'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>Keyword 5</label>
-                  <input className='form-control'
-                    id='proejctList_Keyword5'
-                    type='text'
-                    name='Keyword5'
-                  />
-                </div>
-              </div> 
-              <div className='col-md-3'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>Keyword 6</label>
-                  <input className='form-control'
-                    id='proejctList_Keyword6'
-                    type='text'
-                    name='Keyword6'
-                  />
-                </div>
-              </div> 
-              <div className='col-md-3'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>Keyword 7</label>
-                  <input className='form-control'
-                    id='proejctList_Keyword7'
-                    type='text'
-                    name='Keyword7'
-                  />
-                </div>
-              </div> 
-              <div className='col-md-3'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>Keyword 8</label>
-                  <input className='form-control'
-                    id='proejctList_Keyword8'
-                    type='text'
-                    name='Keyword8'
-                  />
-                </div>
-              </div> 
-              <div className='col-md-3'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>Keyword 9</label>
-                  <input className='form-control'
-                    id='proejctList_Keyword9'
-                    type='text'
-                    name='Keyword9'
-                  />
-                </div>
-              </div> 
-              <div className='col-md-3'>
-                <div className='mb-3'>
-                  <label className='form-label fw-bold fs-12'>Keyword 10</label>
-                  <input className='form-control'
-                    id='proejctList_Keyword10'
-                    type='text'
-                    name='Keyword10'
-                  />
-                </div>
-              </div>  
-            </div>            
-          </div>
-          <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={handleHide}>Close</button>
-            <button type="button" className="btn btn-primary bg-purple">Save </button>
-          </div>
-        </div>
-      </div>
-    </div>
+
   </>
 )
 }

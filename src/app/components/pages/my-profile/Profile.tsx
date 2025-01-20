@@ -8,6 +8,7 @@ import { InputText } from 'primereact/inputtext';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
+import AddEditUser from '../../popup/AddEditUser';
 
 const Profile = () => {
   const [showModal, setShowModal] = useState(false);
@@ -66,7 +67,7 @@ const Profile = () => {
       </div>
     );
   };
-  
+
   const header = renderHeader();
   return (
     <>
@@ -157,6 +158,7 @@ const Profile = () => {
                       {/* //For User Details */}
                       {activeTab === 'userDetails' && (
                         <div className='row'>
+                         
                           <div className='col-md-12 col-lg-12'>                           
                                <DataTable value={users} paginator showGridlines rows={10} header={header} filters={filters}
                                 globalFilterFields={['FirstName', 'UserName', 'UserPassword']}
@@ -165,8 +167,17 @@ const Profile = () => {
                                 <Column field='FirstName' header="Name"  sortable />                              
                                 <Column field='UserName' header="Username" sortable/>                               
                                 <Column field='UserPassword' header="Password" sortable/>                              
-                                <Column field='' header="Actions" />                               
-                               </DataTable>                    
+                                <Column field='' header="Actions"
+                                
+                                body={(rowData)=> 
+                                <div>
+                                  <Link to=''  className="btn btn-primary btn-sm bg-blue m-1">Archive</Link>
+                                <Link to=''  className="btn btn-primary btn-sm bg-red m-1">Change Password</Link>
+                               
+                                <Link to=''  className="btn btn-primary btn-sm bg-purple m-1" onClick={()=> handleShowUser()}>Edit</Link>
+                                <Link to={`/home-page/add-employee/${rowData.EmployeeId}`}  className="btn btn-primary btn-sm bg-blue m-1">View Resume</Link></div>} />                               
+                               </DataTable>
+                                                  
                           </div>
                         </div>
                       )}
@@ -223,66 +234,11 @@ const Profile = () => {
           </div>
         </div>
       </div>
-      {/* User Modal*/}
-      <div className={`modal fade ${showUserModal ? 'show': ''}`} style={{ display: showUserModal ? 'block' : 'none' }} id="addUserModal" role="dialog" aria-labelledby="addUserLabel" aria-hidden="true">
-        <div className="modal-dialog" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title fw-bold" id="">Add User</h5>
-              <button type="button" className="close btn-close" data-dismiss="modal" aria-label="Close">
-                {/* <span aria-hidden="true">&times;</span> */}
-              </button>
-            </div>
-            <div className="modal-body">
-              <form>
-                <div className='col-md-12'>
-                  <div className='mb-2'>
-                    <label className='form-label fw-bold fs-12'>Name</label>
-                    <input type='text'
-                      className='form-control'
-                      id='createName'
-                      placeholder='Name'
-                      required
-                    />
-                  </div>
-                  <div className='mb-2'>
-                    <label className='form-label fw-bold fs-12'>User Name <span className='text-danger'>*</span></label>
-                    <input type='text'
-                    className='form-control'
-                    id='createUserName'
-                    placeholder='someone@nowhere.com'
-                    required
-                    />
-                  </div>
-                  <div className='mb-2'>
-                    <label className='form-label fw-bold fs-12'>New Password</label>
-                    <input type='password'
-                      id='userPassword'
-                      placeholder='Password'
-                      className='form-control'
-                      required
-                    />
-                  </div>
-                  <div className='mb-2'>
-                    <label className='form-label fw-bold fs-12'>Confirm Password</label>
-                    <input type='password'
-                      id='createConfirm'
-                      placeholder='Re-enter Password'
-                      className='form-control'
-                      required
-                    />
-                  </div>
-                </div>
-              </form>
-            </div>
-            <div className="modal-footer border-top-0">
-            <button type="button" className="btn btn-primary btn-change-pwd bg-purple col-md-12">Save</button>
-              <button type="button" className="btn btn-secondary btn-change-pwd col-md-12" data-dismiss="modal" onClick={handleHideUser}>Close</button>
-             
-            </div>
-          </div>
-        </div>
-      </div>
+     {showUserModal && (
+        <AddEditUser data={users}
+        onClose={handleHideUser}
+        show={showUserModal}/>
+     )}
     </>
   )
 }

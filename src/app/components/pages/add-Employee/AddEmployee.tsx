@@ -10,6 +10,8 @@ import { InputIcon } from 'primereact/inputicon';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import ExpandableText from '../Exapnd/ExpandableText';
 import AddEditProject from '../../popup/AddEditProject';
+import {saveAs} from 'file-saver';
+
 
 const AddEmployee = () => {
   const [value, setValue] = useState({
@@ -135,14 +137,39 @@ const AddEmployee = () => {
       </div>
     );
   };
+  const handleExport = () => {
+    let rtfContent = `{
+      \rtf1\ansi\deff0
+      {\fonttbl{\f0 Arial;}{\f1 Arial Narrow;}{\f2 Calibri;}}
+      {\colortbl;\red255\green0\\blue0;\red234\green241\blue221;\red249\green249\blue26;\red51\green122\blue183;\red255\  green255\blue255;}
+      
+      // Table definition with borders and placeholder image text
+      \trowd\trgaph108\trleft-108
+      \clbrdrb\brdrs\brdrw10\brdrcf0\cellx1500
+      \clbrdrb\brdrs\brdrw10\brdrcf0\cellx10000
+      {\pard\intbl\ql\brdrb\brdrs\brdrw10\brdrt\brdrs\brdrw10\brdrl\brdrs\brdrw10\brdrr\brdrs\brdrw10\f1\fs24\qc Placeholder Image\sb110\cell}
+      \row  // End of table row
+    }`;
+  
+    // Blob with application/rtf type to ensure it's saved as RTF
+    const blob = new Blob([rtfContent], { type: "application/msword" });
+  
+    // Save the file as .rtf
+    saveAs(blob, "ExportedText.doc");
+  };
+  
+  
+
   const header = renderHeader();
  
 return (
   <>
     <div className='content-wrapper'>
+    <a type='button' className='btn btn-primary btn-export' onClick={handleExport}>Export</a>
       <div className='heading'>
         <h3>Add Employee</h3>
       </div>
+      
       <form className='row'>
         <div className='col-md-12'>
           <div className='panel panel-default'>
@@ -373,63 +400,14 @@ return (
                     />
                   </div>
                 </div>
-                {/* <div className='col-md-4 px-2'>
-                  <div className='mb-3'>
-                    <label className='form-label'>Client Name <span className='text-danger'>*</span></label>
-                    <input
-                      type='text'
-                      className='form-control'
-                      id='clientName'
-                      name='clientName'
-                      required
-                      aria-label='Client Name'
-                    />
-                  </div>
-                </div>
-                <div className='col-md-4 px-2'>
-                  <div className='mb-3'>
-                    <label className='form-label'>RFP Name <span className='text-danger'>*</span></label>
-                    <input
-                      type='text'
-                      className='form-control'
-                      id='RFPName'
-                      name='RFPName'
-                      required
-                      aria-label='RFP Name'
-                    />
-                  </div>
-                </div>
-                <div className='col-md-4 px-2'>
-                  <div className='mb-3'>
-                    <label className='form-label'>RFP Number <span className='text-danger'>*</span></label>
-                    <input
-                      type='text'
-                      className='form-control'
-                      id='RFPNumber'
-                      name='RFPNumber'
-                      required
-                      aria-label='RFP Number'
-                    />
-                  </div>
-                </div>
-                <div className='col-md-4 px-2'>
-                  <div className='mb-3'>
-                    <label className='form-label'>Upload Image <span className='text-danger'>*</span></label>
-                    <input
-                      type='file'
-                      className='form-control'
-                      id='image'
-                      name='image'
-                      accept='image/*' 
-                    />
-                  </div>
-                </div> */}
+                
               </div>          
             </div>
           </div>
           <div className='d-flex justify-content-between align-items-center'>
             <h3 className='mt-2 color-grey'>Projects</h3>
             <a type='button' className='btn btn-primary btn-user' data-bs-toggle="modal" data-bs-target="#addProjectModal" >Add Project</a>
+          
           </div>         
           <div className='panel panel-default'>
             <DataTable value={projectList}
@@ -443,14 +421,16 @@ return (
               header={header}
               filters={filters}
               onFilter={(e) => setFilters(e.filters)}>
-              <Column header="Actions"
+                  <Column selectionMode="multiple" headerStyle={{ width: '3em' }}></Column>
+              <Column header="Actions" className='width_action'
               body={(rowData) => <div><Link to='' 
-                className='btn btn-primary btn-sm bg-purple m-1' data-toggle="modal" data-target="#addProjectModal" onClick={()=> handleShow(rowData)}>Edit</Link>
-                <Link to='' className='btn btn-primary btn-sm bg-red m-1'>Delete</Link></div>
+                className='btn btn-edit-delete bg-purple m-1 ' data-toggle="modal" data-target="#addProjectModal" onClick={()=> handleShow(rowData)}>Edit</Link>
+                <Link to='' className='btn btn-edit-delete bg-red m-1'>Delete</Link></div>
               }/>
 
               <Column header="Title and Location (city and state)" field='TitleandLocation' sortable
-                body={(rowData) => <ExpandableText content={rowData.TitleandLocation} maxLength={30}></ExpandableText>}/>
+                body={(rowData) => <ExpandableText content={rowData.TitleandLocation} maxLength={60}></ExpandableText>}/>
+
               <Column header="Professional Services Year Completed" field='ProfessionalService' sortable/>
               <Column header="Age PS" field='AgePS' sortable/>
               <Column header="Ongoing (Age PS)" field ='OngoingCheckedPS' 
@@ -472,9 +452,9 @@ return (
                 body={(rowData) => rowData.NACheckedCS ? <span className='color-green'>Y</span> : <span className='color-red'>N</span>}/>
 
               <Column header="Role" field='Role' sortable
-                body={(rowData) => <ExpandableText content={rowData.role} maxLength ={30} ></ExpandableText>}/>
+                body={(rowData) => <ExpandableText content={rowData.role} maxLength ={60} ></ExpandableText>}/>
               <Column header="Description and Specific Role" field='Description' sortable
-                body={(rowData) => <ExpandableText content={rowData.Description} maxLength ={30}></ExpandableText>}
+                body={(rowData) => <ExpandableText content={rowData.Description} maxLength ={60}></ExpandableText>}
                 />
               <Column header="Project Value" field='ProjectValue' sortable/>
               <Column header="Performed with Current Firm" field='Checked' sortable
@@ -501,6 +481,7 @@ return (
                 body={(rowData) => <ExpandableText content={rowData.Keyword10} maxLength ={20}></ExpandableText>}/>
            </DataTable>
           </div>
+         
         </div>
       </form>
       

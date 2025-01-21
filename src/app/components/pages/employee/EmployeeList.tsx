@@ -150,6 +150,10 @@ return (
           <div className='panel'>
             <div className='panel-body'>
              <DataTable value={employees} paginator showGridlines rows={10} header={header} filters={filters}
+             rowsPerPageOptions={[10, 25, 50]}
+             dataKey="id"
+             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" 
+              currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
               globalFilterFields={['Name', 'TitleRole', 'CompanyLocation','Education','CertificatesLicenses','OtherQualification','WorkStartYear','WorkEndYear','ATIStartYear','ATIEndYear']}
               emptyMessage="No matching records found" onFilter={(e) => setFilters(e.filters)}>
                 <Column

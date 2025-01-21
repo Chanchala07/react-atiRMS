@@ -33,14 +33,14 @@
 .p-datatable .p-datatable-tbody > tr > td {
     padding: 8px 10px;
     font-size: 13px;
-    vertical-align: top !important;
+    border-top: 1px solid #eee;
     word-break: break-all
 }
 .p-datatable .p-datatable-tbody > tr > th {
     padding: 8px 18px; 
     font-size: 14px;
 }
-.btn-view{
+.btn-view,.btn-view:hover{
     padding: 4px 5px;
     border-radius: 3px;
     font-size: 14px;

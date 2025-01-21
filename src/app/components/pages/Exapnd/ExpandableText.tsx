@@ -23,9 +23,10 @@ const ExpandableText:React.FC<ExpandableTextProps> = ({content, maxLength = 30})
             style={{
               background: 'none',
               border: 'none',
-              color: '#007bff',
+              color: '#6357ae',
               cursor: 'pointer',
               padding: 0,
+              textDecorationLine: 'underline',
               marginLeft: 5,
             }}
           >

@@ -42,7 +42,7 @@ const LoginPage = () => {
                    
                   </div>
                   <div className='login-btn'>
-                    <Link to="/home-page">
+                    <Link to="/home-page/dashboard">
                       <button type='button' 
                         className='btn btn-primary btn-lg w-100 fs-6' 
                         style={{background:"#337ab7",

@@ -3,12 +3,12 @@ import './dashboard.css';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {  faChevronCircleRight, faUsers, faUserXmark } from '@fortawesome/free-solid-svg-icons';
-import FooterLogin from '../footer-after-login/FooterLogin';
+
 const Dashboard = () => {
     const[countActive, setActive] = useState(0);
     const[countArchived, setArchived] = useState(0);
     useEffect(()=>{
-        const listUrl = 'http://ati.eastus.cloudapp.azure.com:5001/api/myprofile/archivedemployee/';
+        const listUrl = 'http://localhost:80/api/myprofile/archivedemployee/';
         fetch(listUrl)
         .then(response => response.json())
         .then(data =>{
@@ -16,7 +16,7 @@ const Dashboard = () => {
         })
 
         //for active Employee
-        const activeList = 'http://ati.eastus.cloudapp.azure.com:5001/api/employee';
+        const activeList = 'http://localhost:80/api/employee';
         fetch(activeList)
         .then(response => response.json())
         .then(data => {

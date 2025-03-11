@@ -8,17 +8,17 @@ import { InputText } from 'primereact/inputtext';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
+import { profileListData1 } from '../../../Reducers/getDataListSlice';
 import AddEditUser from '../../popup/AddEditUser';
+import { RootState } from '../../../../store';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { useDispatch, useSelector } from 'react-redux';
+import ChangePassword from '../../popup/ChangePassword';
 
 const Profile = () => {
-  const [showModal, setShowModal] = useState(false);
-  const [showUserModal , setShowUserModal] = useState(false);
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const [activeTab, setActiveTab] = useState('personalDetails');
-  const handleShow = () => setShowModal(true);
-  const handleHide = () => setShowModal(false);
-  const handleShowUser = () => setShowUserModal(true);
-  const handleHideUser = () => setShowUserModal(false);
-  const [users, setUsers] = useState<any[]>([]);
+  const { profileListData, status, error } = useSelector((state: RootState) => state.employeeList);
   const [filters, setFilters] = useState<DataTableFilterMeta>({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     FirstName: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -27,22 +27,10 @@ const Profile = () => {
   });
   const [globalFilterValue, setGlobalFilterValue] = useState<string>('');
 
-  useEffect(()=>{
-    const userList = "http://ati.eastus.cloudapp.azure.com:5001/api/myprofile/1/1";
-    fetch(userList)
-    .then(response =>{
-      if(!response.ok){
-        throw new Error("Failed to fetch api");
-      }
-      return response.json();
-    })
-    .then(json =>{
-      const user_List = json.Response.objUsersList; 
-      setUsers(user_List);
-      console.log(user_List)
-    });
-   
-  },[])
+  useEffect(() => {
+    dispatch(profileListData1());
+
+  }, []);
   const tabClick = (tab: string) => {
     setActiveTab(tab);
   };
@@ -55,14 +43,14 @@ const Profile = () => {
 
     setFilters(_filters);
     setGlobalFilterValue(value);
-};
+  };
 
   const renderHeader = () => {
     return (
-      <div className="flex justify-content-between">        
+      <div className="flex justify-content-between">
         <IconField iconPosition="left">
           <InputIcon className="pi pi-search" />
-          <InputText value={globalFilterValue} onChange={onGlobalFilterChange}  placeholder="Search" />
+          <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" />
         </IconField>
       </div>
     );
@@ -71,6 +59,7 @@ const Profile = () => {
   const header = renderHeader();
   return (
     <>
+
       <div className='content-wrapper'>
         <div className='border-bottom bg-gray'>
           <h3 className='text-profile d-flex justify-content-between align-items-center'>
@@ -102,143 +91,135 @@ const Profile = () => {
                 </a>
               </li>
             </ul>
-            <a type='button' className='btn btn-primary btn-user' data-toggle="modal" data-target="#addUserModal" onClick={handleShowUser}>Add New User</a>
+            <button type='button'
+              className='btn btn-primary btn-user'
+              data-bs-toggle="modal"
+              data-bs-target="#addUserModal">
+              Add New User
+            </button>
           </div>
         </div>
 
         <div className='row'>
           <div className='col-md-12'>
             <form>
-              <div className='tab-content p-0 b-0'>                
+              <div className='tab-content p-0 b-0'>
                 <div className='active'>
                   <div className='panel panel-default'>
                     <div className='panel-body'>{
-                      activeTab === 'personalDetails' && (                      
-                      <div className='row'>
-                      <div className='col-md-6'>
-                        <div className='mb-3'>
-                          <label className='form-label'>Unique Id  <span className='text-danger'>* System generated</span></label>
-                          <input 
-                            className='form-control'
-                            type='text'
-                            id = 'userId_unique'
-                            disabled
-                            />
-                        </div>
-                        <div className='mb-3'>
-                          <label className='form-label'>User Name</label>
-                          <input 
-                            className='form-control'
-                            type='text'
-                            id = 'userName'
-                            disabled
-                            />
-                        </div>
-                       
-                      </div>
-                      <div className='col-md-6'>
-                        <div className='mb-3'>
-                            <label className='form-label'>Password </label>
-                            <input 
-                              className='form-control'
-                              type='text'
-                              id = 'password'
-                              readOnly
-                              disabled
+                      activeTab === 'personalDetails' && (
+                        <div className='row'>
+                          <div className='col-md-6'>
+                            <div className='mb-3'>
+                              <label className='form-label'>Unique Id  <span className='text-danger'>* System generated</span></label>
+                              <input
+                                className='form-control'
+                                type='text'
+                                id='userId_unique'
+                                disabled
                               />
+                            </div>
+                            <div className='mb-3'>
+                              <label className='form-label'>User Name</label>
+                              <input
+                                className='form-control'
+                                type='text'
+                                id='userName'
+                                disabled
+                              />
+                            </div>
+
+                          </div>
+                          <div className='col-md-6'>
+                            <div className='mb-3'>
+                              <label className='form-label'>Password </label>
+                              <input
+                                className='form-control'
+                                type='text'
+                                id='password'
+                                readOnly
+                                disabled
+                              />
+                            </div>
+                            <div className='mb-3'>
+                              <button type="button" className='btn btn-primary btn-change-pass mt-4'>Change Password</button>
+                            </div>
+                          </div>
+
                         </div>
-                        <div className='mb-3'>
-                          <button type= "button" className='btn btn-primary btn-change-pass mt-4' data-toggle="modal" data-target="#changePasswordModal"  onClick={handleShow}>Change Password</button>
-                        </div>
-                        </div>
-                        
-                      </div>
                       )}
 
                       {/* //For User Details */}
                       {activeTab === 'userDetails' && (
                         <div className='row'>
-                         
-                          <div className='col-md-12 col-lg-12'>                           
-                               <DataTable value={users} paginator showGridlines rows={10} header={header} filters={filters}
-                                globalFilterFields={['FirstName', 'UserName', 'UserPassword']}
-                                emptyMessage="No matching records found" onFilter={(e) => setFilters(e.filters)}>
 
-                                <Column field='FirstName' header="Name"  sortable />                              
-                                <Column field='UserName' header="Username" sortable/>                               
-                                <Column field='UserPassword' header="Password" sortable/>                              
-                                <Column field='' header="Actions"
-                                
-                                body={(rowData)=> 
-                                <div>
-                                  <Link to=''  className="btn btn-primary btn-sm bg-blue m-1">Archive</Link>
-                                <Link to=''  className="btn btn-primary btn-sm bg-red m-1">Change Password</Link>
-                               
-                                <Link to=''  className="btn btn-primary btn-sm bg-purple m-1" onClick={()=> handleShowUser()}>Edit</Link>
-                                <Link to={`/home-page/add-employee/${rowData.EmployeeId}`}  className="btn btn-primary btn-sm bg-blue m-1">View Resume</Link></div>} />                               
-                               </DataTable>
-                                                  
+                          <div className='col-md-12 col-lg-12'>
+                            <DataTable value={profileListData}
+                              paginator
+                              showGridlines
+                              rows={10}
+                              header={header}
+                              filters={filters}
+                              globalFilterFields={['FirstName', 'UserName', 'UserPassword']}
+                              emptyMessage="No matching records found"
+                              onFilter={(e) => setFilters(e.filters)}>
+
+                              <Column field='FirstName'
+                                header="Name"
+                                sortable />
+
+                              <Column field='UserName'
+                                header="Username"
+                                sortable />
+
+                              <Column field='UserPassword'
+                                header="Password"
+                                sortable />
+
+                              <Column field=''
+                                header="Actions"
+
+                                body={(rowData) =>
+                                  <div>
+                                    <Link to=''
+                                      className="btn btn-primary btn-sm bg-blue m-1">
+                                      Archive
+                                    </Link>
+
+                                    <button type='button'
+                                      className="btn btn-primary btn-sm bg-red m-1"
+                                      data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                                      Change Password
+                                    </button>
+
+                                    <button type='button'
+                                      className="btn btn-primary btn-sm bg-purple m-1"
+                                      data-bs-toggle="modal" data-bs-target="#addUserModal">
+                                      Edit
+                                    </button>
+
+                                    <Link to={`/home-page/add-employee/${rowData.EmployeeId}`}
+                                      className="btn btn-primary btn-sm bg-blue m-1">
+                                      View Resume
+                                    </Link>
+                                  </div>} />
+                            </DataTable>
                           </div>
                         </div>
                       )}
-                      
+
                     </div>
                   </div>
                 </div>
               </div>
             </form>
+            <AddEditUser />
+            <ChangePassword/>
           </div>
         </div>
       </div>
-      <div className={`modal fade ${showModal ? 'show': ''}`}  style={{ display: showModal ? 'block' : 'none' }} role="dialog" id="changePasswordModal" aria-labelledby="changePasswordLabel" aria-hidden="true">
-        <div className="modal-dialog" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title fw-bold">Change Password</h5>
-              <button type="button" className="close btn-close" data-dismiss="modal" aria-label="Close">
-                {/* <span aria-hidden="true">&times;</span> */}
-              </button>
-            </div>
-            <div className="modal-body">
-              <form>
-                <div className='col-md-12'>
-                  <div className='mb-2'>
-                    <label className='form-label fw-bold fs-12'>New Password</label>
-                    <input
-                      type='password'
-                      className='form-control'
-                      id='userPassword'
-                      name='userPassword'
-                      required                      
-                      placeholder='Password'
-                    />
-                  </div>
-                  <div className='mb-2'>
-                    <label className='form-label fw-bold fs-12'>Confirm Password</label>
-                    <input
-                      type='password'
-                      className='form-control'
-                      id='confirmPassword'
-                      name='confirmPassword'
-                      required                      
-                      placeholder='Re-enter Password'
-                    />
-                  </div>
-                </div>
-              </form>
-            </div>
-            <div className="modal-footer border-top-0">
-              <button type="button" className="btn btn-primary bg-purple btn-change-pwd col-md-12">Change Password</button>
-              <button type="button" className="btn btn-secondary btn-change-pwd col-md-12" onClick={handleHide}>Close</button>
-            </div>
-          </div>
-        </div>
-      </div>
-     {showUserModal && (
-        <AddEditUser data={users}
-        onClose={handleHideUser}
-        show={showUserModal}/>
-     )}
+
+
     </>
   )
 }

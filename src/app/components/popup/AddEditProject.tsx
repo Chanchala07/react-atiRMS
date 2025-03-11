@@ -1,21 +1,15 @@
 import React from 'react'
-interface  AddEditProjectProps {
-  data:any;
-  onClose:() => void;
-  show: boolean
-}
-const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) => {
-  console.log(data,"project datas")
-  if (!show) return null; // Return null if modal is not visible
+
+const AddEditProject = () => {
   return (
 <>
 
-    <div className= {`modal fade ${show ? 'show': ''}`}  style={{ display: show ? 'block' : 'none' }}  id="addProjectModal" role="dialog" aria-labelledby="addProjectModalLabel" aria-hidden="true">
+    <div className= "modal fade" id="addProjectModal" role="dialog" aria-labelledby="addProjectModalLabel" aria-hidden="true">
       <div className="modal-dialog modal-lg" role="document">
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title" id="addProjectModalLabel">Add Project</h5>
-            <button type="button" className="close btn-close" data-dismiss="modal" aria-label="Close">
+            <button type="button" className="close btn-close" data-bs-dismiss="modal" aria-label="Close">
             
             </button>
           </div>
@@ -28,8 +22,7 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                     className='form-control'
                     type='text'
                     id='proejctList_TitleandLocation'
-                    name='TitleandLocation'
-                    value={data.TitleandLocation}
+                    name='TitleandLocation'                  
                     required
                   />
                 </div>
@@ -40,7 +33,6 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                   <input className='form-control'
                     type='text'
                     id='proejctList_role'
-                    value={data.Role}
                     name='Role'
                   />
                 </div>
@@ -55,7 +47,6 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                         type='checkbox'
                         id='proejctList_checked'                       
                         style={{ width: '25px', height: '25px' }} 
-                        checked={data.Checked}
                       />                   
                     </div>
                 </div>
@@ -67,7 +58,6 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                     type='text'
                     id='proejctList_professionalService'
                     name = 'ProfessionalService'
-                    value={data.ProfessionalService}
                   />
                 </div>
               </div> 
@@ -81,7 +71,6 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                       type='checkbox'
                       id='proejctList_ongoingPS'
                       style={{ width: '25px', height: '25px' }} 
-                      checked = {data.OngoingCheckedPS}
                     />
                   </div>
                 </div>
@@ -96,7 +85,6 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                       type='checkbox'
                       id='proejctList_naPS'
                       style={{ width: '25px', height: '25px' }} 
-                      checked = {data.NACheckedPS}
                     />
                   </div>
                 </div>
@@ -108,7 +96,6 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                     type='text'
                     id='proejctList_agePS'
                     name = 'AgePS'
-                    value={data.AgePS}
                     disabled
                   
                   />
@@ -121,7 +108,6 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                     type='text'
                     id='proejctList_construction'
                     name='Construction'
-                    value={data.Construction}
                   />
                 </div>
               </div> 
@@ -134,7 +120,6 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                      type='checkbox'
                      id='proejctList_ongoingCS'
                      style={{ width: '25px', height: '25px' }} 
-                     checked={data.OngoingCheckedCS}
                     />                   
                   </div>
                 </div>
@@ -148,7 +133,6 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                       type='checkbox'
                       id='proejctList_naCS'
                       style={{ width: '25px', height: '25px' }}
-                      checked={data.NACheckedCS} 
                     />                   
                   </div>
                 </div>
@@ -159,7 +143,6 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                   <input className='form-control'
                   type='text'
                   id='proejctList_ageCS'
-                  value={data.AgeCS}
                   disabled
                   />
                 </div>
@@ -170,7 +153,6 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                   <input className='form-control'
                     type='string'
                     id='proejctList_ProjectValue'
-                    value={data.ProjectValue}
                   />
                 </div>
               </div>
@@ -181,7 +163,6 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                     id='proejctList_description'
                     rows={4}
                     style={{resize:"none"}}
-                    value={data.Description}
                   />              
                 </div>
               </div>   
@@ -192,7 +173,6 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                     id='proejctList_Keyword1'
                     type='text'
                     name='Keyword1'
-                    value={data.Keyword1}
                   />
                 </div>
               </div>
@@ -203,7 +183,6 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                     id='proejctList_Keyword2'
                     type='text'
                     name='Keyword2'
-                    value={data.Keyword2}
                   />
                 </div>
               </div> 
@@ -214,7 +193,6 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                     id='proejctList_Keyword3'
                     type='text'
                     name='Keyword3'
-                    value={data.Keyword3}
                   />
                 </div>
               </div> 
@@ -225,7 +203,6 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                     id='proejctList_Keyword4'
                     type='text'
                     name='Keyword4'
-                    value={data.Keyword4}
                   />
                 </div>
               </div> 
@@ -236,7 +213,6 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                     id='proejctList_Keyword5'
                     type='text'
                     name='Keyword5'
-                    value={data.Keyword5}
                   />
                 </div>
               </div> 
@@ -247,7 +223,6 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                     id='proejctList_Keyword6'
                     type='text'
                     name='Keyword6'
-                    value={data.Keyword6}
                   />
                 </div>
               </div> 
@@ -258,7 +233,6 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                     id='proejctList_Keyword7'
                     type='text'
                     name='Keyword7'
-                    value={data.Keyword7}
                   />
                 </div>
               </div> 
@@ -269,7 +243,6 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                     id='proejctList_Keyword8'
                     type='text'
                     name='Keyword8'
-                    value={data.Keyword8}
                   />
                 </div>
               </div> 
@@ -280,7 +253,6 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                     id='proejctList_Keyword9'
                     type='text'
                     name='Keyword9'
-                    value={data.Keyword9}
                   />
                 </div>
               </div> 
@@ -291,14 +263,13 @@ const AddEditProject: React.FC<AddEditProjectProps> = ({ data, onClose, show }) 
                     id='proejctList_Keyword10'
                     type='text'
                     name='Keyword10'
-                    value={data.Keyword10}
                   />
                 </div>
               </div>  
             </div>            
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={onClose}>Close</button>
+            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             <button type="button" className="btn btn-primary bg-purple">Save </button>
           </div>
         </div>

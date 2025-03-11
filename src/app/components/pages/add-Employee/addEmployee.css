@@ -43,3 +43,6 @@
     border-radius: 3px;
     color: #fff;
 }
+.p-datatable.p-datatable-gridlines .p-paginator-bottom {
+    border-width: 0 0px 0px 0px;
+}

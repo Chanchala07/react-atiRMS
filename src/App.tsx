@@ -17,13 +17,12 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LoginPage />} />
-          <Route path="/home-page" element={<SideBar />}>
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="add-employee/:id" element={<AddEmployee />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="employee-list" element={<EmployeeList />} />
-            <Route path="archived-list" element={<ArchivedEmployees/>}></Route>
-            {/* Add other routes as needed */}
+          <Route path="home-page" element={<SideBar />}>
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="add-employee/:id" element={<AddEmployee />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="employee-list" element={<EmployeeList />} />
+          <Route path="archived-list" element={<ArchivedEmployees />}></Route>
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

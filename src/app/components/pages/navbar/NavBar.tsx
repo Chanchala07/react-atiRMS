@@ -14,7 +14,7 @@ const NavBar = () => {
           </div>
           <div>
             <ul className="nav navbar-nav navbar-right">
-              <li><Link to="/"> <FontAwesomeIcon icon={faSignOutAlt} className='fa-icon' style={{ color: "#fff" }} /></Link></li>
+              <li><Link to="/log-out"> <FontAwesomeIcon icon={faSignOutAlt} className='fa-icon' style={{ color: "#fff" }} /></Link></li>
             </ul>
           </div>
 

@@ -14,6 +14,7 @@ import { ThunkDispatch } from '@reduxjs/toolkit';
 import { useDispatch, useSelector } from 'react-redux';
 import { employeeListData1 } from '../../../Reducers/getDataListSlice';
 import { RootState } from '../../../../store';
+import {Loader} from '../../constants/loader/Loader';
 
 interface Employee {
   Id: number
@@ -31,7 +32,9 @@ interface Employee {
   ATiEndPresent: boolean
   ProjectDetails: string
 }
+
 const EmployeeList = () => {
+  const [loading,setLoading] = useState(true);
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const { employeeListData, status, error } = useSelector((state: RootState) => state.employeeList);
 
@@ -54,9 +57,14 @@ const EmployeeList = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        dispatch(employeeListData1());
+        setLoading(true);
+
+        await dispatch(employeeListData1());
+        setLoading(false);
       } catch (error) {
+
         console.log("error", error);
+        setLoading(false);
       }
     }
     fetchData();
@@ -135,13 +143,13 @@ const EmployeeList = () => {
   const header = renderHeader();
   return (
     <>
+    {loading ?  <Loader/> : ""}
       <div className='content-wraper'>
         <div className='heading'>
           <h3>Active Employees{" "}
             <FontAwesomeIcon
               icon={faCircleQuestion}
               className='fs-20'
-              title='The search functionality searches over all Employee Info and Project Info data for a given Employee. You can also sort on each of the columns.'
             />
 
           </h3>

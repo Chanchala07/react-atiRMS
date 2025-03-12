@@ -7,7 +7,9 @@ interface EmployeeListState {
     employeeListData: any[];
     profileListData: any[];
     archiveEmployeeListData: any[];
-    employeeId : number | null
+    employeeId : number | null;
+    employeeCount : number | null;
+    archivedCount : number | null;
 }
 
 const initialState: EmployeeListState = {
@@ -17,6 +19,8 @@ const initialState: EmployeeListState = {
     profileListData: [],
     archiveEmployeeListData: [],
     employeeId: null,
+    employeeCount: null,
+    archivedCount: null
 };
 
 export const employeeListData1 = createAsyncThunk(
@@ -27,7 +31,11 @@ export const employeeListData1 = createAsyncThunk(
                 `${process.env.REACT_APP_BASE_URL}/api/employee`,
             );
             if (response.data) {
-                return response.data.Response || [];
+                const employeeData = response.data.Response || [];
+                return {
+                    employeeList : employeeData,
+                    employeeCount : employeeData.length
+                }
             }
         } catch (error: any) {
             return { success: false, error: error.message };
@@ -42,7 +50,11 @@ export const archivedListData = createAsyncThunk(
                 `${process.env.REACT_APP_BASE_URL}/api/myprofile/archivedemployee/`,
             );
             if (response.data) {
-                return response.data.Response || [];
+                const archivedData =  response.data.Response || [];
+                return {
+                    employeeList : archivedData,
+                    archivedCount : archivedData.length
+                }
             }
         } catch (error: any) {
             return { success: false, error: error.message };
@@ -51,7 +63,7 @@ export const archivedListData = createAsyncThunk(
 );
 export const employeeDataById = createAsyncThunk(
     'employee/employeeById',
-    async (employeeId: number,{rejectWithValue}) => {
+    async (employeeId: number) => {
         try {
             const response = await apiClient.get(
                 `${process.env.REACT_APP_BASE_URL}/api/employee/${employeeId}`,
@@ -93,7 +105,8 @@ const employeeListSlice = createSlice({
             .addCase(employeeListData1.fulfilled, (state, action) => {
                 state.status = 'idle';
                 state.error = "";
-                state.employeeListData = action.payload;
+                state.employeeListData = action.payload?.employeeList;
+                state.employeeCount = action.payload?.employeeCount;
             })
             .addCase(employeeListData1.rejected, (state, action) => {
                 state.status = 'error';
@@ -107,7 +120,8 @@ const employeeListSlice = createSlice({
             .addCase(archivedListData.fulfilled, (state, action) => {
                 state.status = 'idle';
                 state.error = "";
-                state.archiveEmployeeListData = action.payload;
+                state.archiveEmployeeListData = action.payload?.employeeList;
+                state.archivedCount = action.payload?.archivedCount;
             })
             .addCase(archivedListData.rejected, (state, action) => {
                 state.status = 'error';

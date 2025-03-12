@@ -14,6 +14,7 @@ import 'primereact/resources/primereact.css';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primeicons/primeicons.css';
 import { PrimeReactProvider } from 'primereact/api';
+import './app/assets/css/common.css';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );

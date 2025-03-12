@@ -2,29 +2,34 @@ import React, { useEffect, useState } from 'react'
 import './dashboard.css';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {  faChevronCircleRight, faUsers, faUserXmark } from '@fortawesome/free-solid-svg-icons';
+import { faChevronCircleRight, faUsers, faUserXmark } from '@fortawesome/free-solid-svg-icons';
+import { Loader } from '../../constants/loader/Loader';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { useDispatch, useSelector } from 'react-redux';
+import { employeeListData1, archivedListData } from '../../../Reducers/getDataListSlice';
+import { RootState } from '../../../../store';
 
 const Dashboard = () => {
-    const[countActive, setActive] = useState(0);
-    const[countArchived, setArchived] = useState(0);
-    useEffect(()=>{
-        const listUrl = 'http://localhost:80/api/myprofile/archivedemployee/';
-        fetch(listUrl)
-        .then(response => response.json())
-        .then(data =>{
-            setArchived(data.Response.length);
-        })
-
-        //for active Employee
-        const activeList = 'http://localhost:80/api/employee';
-        fetch(activeList)
-        .then(response => response.json())
-        .then(data => {
-            setActive(data.Response.length);
-        })
-    },[]);
+    const [loading, setLoading] = useState(true);
+    const { employeeCount, status, error, archivedCount } = useSelector((state: RootState) => state.employeeList);
+    const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                await dispatch(employeeListData1());
+                dispatch(archivedListData());
+                setLoading(false);
+            } catch (error) {
+                console.log(error, "error");
+                setLoading(false);
+            }
+        }
+        fetchData();
+    }, []);
     return (
         <>
+            {loading ? <Loader/> : ""}
             <div className='content-wrapper'>
                 <div className='heading'>
                     <h3>Dashboard</h3>
@@ -33,19 +38,19 @@ const Dashboard = () => {
                             <div className='employye-box'>
                                 <div className='panel-heading bg-reen'>
                                     <div className='row p-0'>
-                                        <div className='col-sm-3'>                                  
-                                            <FontAwesomeIcon icon={faUsers} className='icon-large'/>                                          
+                                        <div className='col-sm-3'>
+                                            <FontAwesomeIcon icon={faUsers} className='icon-large' />
                                         </div>
                                         <div className='col-sm-9 text-end'>
-                                            <div className='fs-1'>{countActive}</div>
+                                            <div className='fs-1'>{employeeCount}</div>
                                             <p className='m-0'>Active Employees</p>
                                         </div>
                                     </div>
                                 </div>
-                                <Link to = '/home-page/employee-list' className='bg-dark-gray panel-footer text-decoration-none'>
+                                <Link to='/home-page/employee-list' className='bg-dark-gray panel-footer text-decoration-none'>
                                     <span className='pull-left'>View Details</span>
                                     <span className='float-end'>
-                                        <FontAwesomeIcon icon = {faChevronCircleRight}/>
+                                        <FontAwesomeIcon icon={faChevronCircleRight} />
                                     </span>
                                 </Link>
                             </div>
@@ -55,18 +60,18 @@ const Dashboard = () => {
                                 <div className='panel-heading bg-red'>
                                     <div className='row p-0'>
                                         <div className='col-sm-3'>
-                                         <FontAwesomeIcon icon={faUserXmark} className='icon-large'/>
+                                            <FontAwesomeIcon icon={faUserXmark} className='icon-large' />
                                         </div>
                                         <div className='col-sm-9 text-end'>
-                                            <div className='fs-1'>{countArchived}</div>
+                                            <div className='fs-1'>{archivedCount}</div>
                                             <p className='m-0'>Unarchived Employyes</p>
                                         </div>
                                     </div>
                                 </div>
-                                <Link to = '/home-page/archived-list' className='bg-dark-gray panel-footer text-decoration-none'>
+                                <Link to='/home-page/archived-list' className='bg-dark-gray panel-footer text-decoration-none'>
                                     <span className='pull-left'>View Details</span>
                                     <span className='float-end'>
-                                        <FontAwesomeIcon icon = {faChevronCircleRight}/>
+                                        <FontAwesomeIcon icon={faChevronCircleRight} />
                                     </span>
                                 </Link>
                             </div>
@@ -74,7 +79,7 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-               
+
             </div>
         </>
     )

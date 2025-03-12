@@ -95,10 +95,11 @@ const SideBar = () => {
                         >
                             &#9776;
                         </button>
-                        <div>
-                            <ul className="nav navbar-nav navbar-right">
-                                <li><a href="#"> <FontAwesomeIcon icon={faSignOutAlt} className='fa-icon' style={{ color: "#fff" }} /></a></li>
-                            </ul>
+                        <div className="nav navbar-nav navbar-right">
+                            
+                              <Link to="/"> 
+                              <FontAwesomeIcon icon={faSignOutAlt} className='fa-icon' style={{ color: "#fff" }} /></Link>
+                        
                         </div>
                     </nav>
                 </header>

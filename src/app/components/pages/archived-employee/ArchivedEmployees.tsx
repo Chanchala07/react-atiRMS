@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import { archivedListData } from '../../../Reducers/getDataListSlice';
 import { RootState } from '../../../../store';
+import { Loader } from '../../constants/loader/Loader';
 
 interface Employee {
   Id: number
@@ -29,6 +30,7 @@ interface Employee {
   ProjectDetails: string
 }
 const ArchivedEmployees = () => {
+  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const { archiveEmployeeListData, status, error } = useSelector((state: RootState) => state.employeeList)
   const [filters, setFilters] = useState<DataTableFilterMeta>({
@@ -50,15 +52,17 @@ const ArchivedEmployees = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        dispatch(archivedListData());
+        setLoading(true);
+        await dispatch(archivedListData());
+        setLoading(false);
       } catch (error) {
         console.log(error, "error");
+        setLoading(false);
       }
     }
     fetchData();
   }, []);
 
-  // console.log(employees,"employees  ")
   const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     let _filters = { ...filters };
@@ -74,8 +78,11 @@ const ArchivedEmployees = () => {
     return (
       <div className="flex justify-content-between">
         <IconField iconPosition="left">
+          
           <InputIcon className="pi pi-search" />
-          <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" />
+          <InputText value={globalFilterValue}
+            onChange={onGlobalFilterChange}
+            placeholder="Search" />
         </IconField>
       </div>
     );
@@ -130,6 +137,7 @@ const ArchivedEmployees = () => {
   const header = renderHeader();
   return (
     <>
+      {loading ? <Loader /> : ""}
       <div className='content-wraper'>
         <div className='heading'>
           <h3>Archived Employees{" "}

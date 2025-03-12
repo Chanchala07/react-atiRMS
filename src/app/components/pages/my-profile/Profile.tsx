@@ -14,8 +14,10 @@ import { RootState } from '../../../../store';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import { useDispatch, useSelector } from 'react-redux';
 import ChangePassword from '../../popup/ChangePassword';
+import { Loader } from '../../constants/loader/Loader';
 
 const Profile = () => {
+  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const [activeTab, setActiveTab] = useState('personalDetails');
   const { profileListData, status, error } = useSelector((state: RootState) => state.employeeList);
@@ -28,9 +30,19 @@ const Profile = () => {
   const [globalFilterValue, setGlobalFilterValue] = useState<string>('');
 
   useEffect(() => {
-    dispatch(profileListData1());
-
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        await dispatch(profileListData1());
+        setLoading(false);
+      } catch (error) {
+        console.log(error, "error");
+        setLoading(false);
+      }
+    }
+    fetchData();
   }, []);
+
   const tabClick = (tab: string) => {
     setActiveTab(tab);
   };
@@ -59,7 +71,7 @@ const Profile = () => {
   const header = renderHeader();
   return (
     <>
-
+      {loading ? <Loader/> : ""}
       <div className='content-wrapper'>
         <div className='border-bottom bg-gray'>
           <h3 className='text-profile d-flex justify-content-between align-items-center'>
@@ -214,7 +226,7 @@ const Profile = () => {
               </div>
             </form>
             <AddEditUser />
-            <ChangePassword/>
+            <ChangePassword />
           </div>
         </div>
       </div>

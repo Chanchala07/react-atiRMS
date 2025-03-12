@@ -6,6 +6,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@hookform/resolvers": "^4.1.3",
     "@reduxjs/toolkit": "^2.6.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -24,12 +25,14 @@
     "react": "^18.3.1",
     "react-data-table-component": "^7.6.2",
     "react-dom": "^18.3.1",
+    "react-hook-form": "^7.54.2",
     "react-redux": "^9.2.0",
     "react-scripts": "5.0.1",
     "react-tooltip": "^5.28.0",
     "redocx": "^1.1.4",
     "typescript": "^4.9.5",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "yup": "^1.6.1"
   },
   "scripts": {
     "start": "react-scripts start",

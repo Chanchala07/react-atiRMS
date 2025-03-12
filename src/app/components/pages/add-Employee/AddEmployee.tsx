@@ -13,6 +13,7 @@ import { RootState } from '../../../../store';
 import { useDispatch, useSelector } from 'react-redux';
 import { employeeDataById } from '../../../Reducers/getDataListSlice';
 import { ThunkDispatch } from '@reduxjs/toolkit';
+import { Loader } from '../../constants/loader/Loader';
 
 const AddEmployee = () => {
   const [value, setValue] = useState({
@@ -31,7 +32,7 @@ const AddEmployee = () => {
 
   });
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
-
+  const [loading, setLoading] = useState(true);
   const [projectList, setProjectList] = useState<any[]>([]);
   const { id } = useParams<{ id: string }>();
   const employeeId = Number(id);
@@ -77,11 +78,14 @@ const AddEmployee = () => {
     const fetchData = async () => {
       if (employeeId) {
         try {
-         const response =  await dispatch(employeeDataById(employeeId));
-         console.log(response,"response");
+          setLoading(true);
+          const response = await dispatch(employeeDataById(employeeId));
+          console.log(response, "response");
+          setLoading(false);
         }
-         catch(error){
+        catch (error) {
           console.log(error, "error");
+          setLoading(false);
         }
       }
     }
@@ -422,7 +426,8 @@ const AddEmployee = () => {
                     <Link to='' className='btn btn-edit-delete bg-red m-1'>Delete</Link></div>
                   } />
 
-                <Column header="Title and Location (city and state)"
+                <Column 
+                header="Title and Location (city and state)"
                   field='TitleandLocation'
                   sortable
                   body={(rowData) =>

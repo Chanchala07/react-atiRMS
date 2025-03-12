@@ -12,10 +12,10 @@ const NavBar = () => {
           <div className="navbar-header">
           
           </div>
-          <div>
-            <ul className="nav navbar-nav navbar-right">
-              <li><Link to="/log-out"> <FontAwesomeIcon icon={faSignOutAlt} className='fa-icon' style={{ color: "#fff" }} /></Link></li>
-            </ul>
+          <div className="nav navbar-nav navbar-right">
+          
+              <Link to="/"> Logout<FontAwesomeIcon icon={faSignOutAlt} className='fa-icon' style={{ color: "#fff" }} /></Link>
+            
           </div>
 
         </nav>

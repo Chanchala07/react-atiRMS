@@ -3,16 +3,28 @@ import './sideBar.css';
 import atiLogo from '../../../assets/images/logo-white.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArchive, faDashboard, faEdit, faSignOutAlt, faUsers } from "@fortawesome/free-solid-svg-icons";
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import FooterLogin from '../footer-after-login/FooterLogin';
+import { useDispatch, useSelector } from 'react-redux';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { logout } from '../../../Reducers/authSlice';
 
 const SideBar = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+    const navigate = useNavigate();
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
-
+    const handleLogout = () => {
+        dispatch(logout());
+        navigate('/');
+    }
+    const userRoleId = localStorage.getItem("UserRoleId");
+    const firstName = localStorage.getItem("FirstName");
+    const roleNAme = localStorage.getItem("UserRoleName");
+    const firstLetter = firstName ? firstName.charAt(0).toUpperCase() : "";
     return (
         <div className="App">
 
@@ -38,13 +50,15 @@ const SideBar = () => {
                     <div className='user-block'>
                         <div className='pt-4 pb-2'>
                             <div className='mx-auto user-picture'>
-                                <div className='user-circle'>S</div>
+                                <div className='user-circle'>
+                                {firstLetter}
+                                </div>
                             </div>
                             {isSidebarOpen && (
                                 <div className='user-info text-center d-flex flex-column'>
-                                    <span className='user-name'>Hello, Super Admin</span>
+                                    <span className='user-name'>Hello, {firstName}</span>
                                     <span className='user-role'>
-                                        <Link to='/home-page/profile' className='text-decoration-none text-purple'>SuperAdmin </Link>
+                                        <Link to='/home-page/profile' className='text-decoration-none text-purple'>{roleNAme} </Link>
                                         <FontAwesomeIcon icon={faEdit} />
                                     </span>
                                 </div>
@@ -52,7 +66,7 @@ const SideBar = () => {
                         </div>
 
                     </div>
-                    <div className='employee'>
+                    {Number(userRoleId) === 1 ? (<div className='employee'>
                         <Link to="/home-page/dashboard"
                             title='Dashboard'
                             className='employee-link'>
@@ -60,9 +74,9 @@ const SideBar = () => {
                                 style={{ color: "#fff", marginRight: "6%" }} />
                             {isSidebarOpen && (<span className='employee-text'>Dashboard</span>)}
                         </Link>
-                    </div>
+                    </div>) : ""}
 
-                    <div className='employee'>
+                    {Number(userRoleId) === 1 ? (<div className='employee'>
                         <Link to="/home-page/employee-list"
                             title='Active Employee'
                             className='employee-link'>
@@ -70,8 +84,9 @@ const SideBar = () => {
                                 style={{ color: "#fff", marginRight: "6%" }} />
                             {isSidebarOpen && (<span className='employee-text'>Active Employees</span>)}
                         </Link>
-                    </div>
-                    <div className='employee'>
+                    </div>) : ""}
+
+                    {Number(userRoleId) === 1 ? (<div className='employee'>
                         <Link to="/home-page/archived-list"
                             title='Archived Employees'
                             className='employee-link'>
@@ -79,7 +94,8 @@ const SideBar = () => {
                                 style={{ color: "#fff", marginRight: "6%" }} />
                             {isSidebarOpen && (<span className='employee-text'>Archived Employees</span>)}
                         </Link>
-                    </div>
+                    </div>) : ""}
+
                 </div>
             </div>
 
@@ -95,11 +111,11 @@ const SideBar = () => {
                         >
                             &#9776;
                         </button>
-                        <div className="nav navbar-nav navbar-right">
-                            
-                              <Link to="/"> 
-                              <FontAwesomeIcon icon={faSignOutAlt} className='fa-icon' style={{ color: "#fff" }} /></Link>
-                        
+                        <div className="nav navbar-nav navbar-right d-flex">
+
+                            <Link to="/" onClick={handleLogout}>
+                                <FontAwesomeIcon icon={faSignOutAlt} className='fa-icon' style={{ color: "#fff" }} /></Link>
+
                         </div>
                     </nav>
                 </header>

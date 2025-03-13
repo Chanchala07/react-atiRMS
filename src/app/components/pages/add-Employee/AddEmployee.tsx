@@ -36,15 +36,6 @@ const AddEmployee = () => {
   const [projectList, setProjectList] = useState<any[]>([]);
   const { id } = useParams<{ id: string }>();
   const employeeId = Number(id);
-  const [showModal, setShowModal] = useState(false);
-  const [projectData, setProjectData] = useState({});
-
-  const handleShow = (data: any) => {
-    setShowModal(true);
-    setProjectData(data)
-
-  }
-  const handleHide = () => setShowModal(false);
   const [globalFilterValue, setGlobalFilterValue] = useState<string>('');
   const [filters, setFilters] = useState<DataTableFilterMeta>({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -81,6 +72,26 @@ const AddEmployee = () => {
           setLoading(true);
           const response = await dispatch(employeeDataById(employeeId));
           console.log(response, "response");
+          if (response?.payload) {
+            const formattedWorkStartYear = response.payload.WorkStartYear ? response.payload.WorkStartYear.split('T')[0] : ''
+            const formattedWorkEndYear = response.payload.WorkEndYear ? response.payload.WorkEndYear.split('T')[0] : ''
+            const formattedATIStartYear = response.payload.ATIStartYear ? response.payload.ATIStartYear.split('T')[0] : ''
+            const formattedATIEndYear = response.payload.ATIEndYear ? response.payload.ATIEndYear.split('T')[0] : ''
+            setValue((prev) => ({
+              ...prev,
+              ...response.payload,
+
+              WorkStartYear: formattedWorkStartYear,
+              WorkEndYear: formattedWorkEndYear,
+              WorkEndPresent: response.payload.WorkEndPresent || false,
+              ATIStartYear: formattedATIStartYear,
+              ATIEndYear: formattedATIEndYear,
+              ATiEndPresent: response.payload.ATiEndPresent || false,
+
+            }));
+
+            setProjectList(response.payload.proejctList);
+          }
           setLoading(false);
         }
         catch (error) {
@@ -127,6 +138,7 @@ const AddEmployee = () => {
 
   return (
     <>
+      {loading ? <Loader /> : ""}
       <div className='content-wrapper'>
         <div className='heading'>
           <h3>Add Employee</h3>
@@ -417,17 +429,18 @@ const AddEmployee = () => {
                 <Column header="Actions"
                   className='width_action'
                   body={(rowData) => <div>
-                    <Link to=''
+                    <button type='button'
                       className='btn btn-edit-delete bg-purple m-1 '
-                      data-toggle="modal"
-                      data-target="#addProjectModal"
-                      onClick={() => handleShow(rowData)}>Edit</Link>
+                      data-bs-toggle="modal"
+                      data-bs-target="#addProjectModal">
+                      Edit
+                    </button>
 
                     <Link to='' className='btn btn-edit-delete bg-red m-1'>Delete</Link></div>
                   } />
 
-                <Column 
-                header="Title and Location (city and state)"
+                <Column
+                  header="Title and Location (city and state)"
                   field='TitleandLocation'
                   sortable
                   body={(rowData) =>

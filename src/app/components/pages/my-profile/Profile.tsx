@@ -128,6 +128,7 @@ const Profile = () => {
                                 className='form-control'
                                 type='text'
                                 id='userId_unique'
+                                value = {0}
                                 disabled
                               />
                             </div>

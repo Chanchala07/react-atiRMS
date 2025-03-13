@@ -30,6 +30,7 @@
     "react-scripts": "5.0.1",
     "react-tooltip": "^5.28.0",
     "redocx": "^1.1.4",
+    "sweetalert2": "^11.17.2",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4",
     "yup": "^1.6.1"

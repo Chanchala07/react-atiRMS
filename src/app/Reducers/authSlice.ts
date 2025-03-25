@@ -37,6 +37,7 @@ const authSlice = createSlice({
             localStorage.removeItem("UserRoleId");
             localStorage.removeItem("FirstName");
             localStorage.removeItem("UserRoleName");
+            localStorage.removeItem("LoggedInUserId");
         }
     },
     extraReducers: (builder) => {

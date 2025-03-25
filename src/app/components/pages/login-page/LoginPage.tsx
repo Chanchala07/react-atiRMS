@@ -60,6 +60,7 @@ const LoginPage = () => {
         localStorage.setItem("UserRoleId",res.UserRoleId);
         localStorage.setItem("FirstName",res.FirstName);
         localStorage.setItem("UserRoleName",res.UserRoleName);
+        localStorage.setItem("UserId",res.Id);
         if(res.UserRoleId === 1){
           navigate("/home-page/dashboard")
         }
@@ -77,11 +78,11 @@ const LoginPage = () => {
       .catch((error:any) => {
         console.log("Error response:", error);
 
-        // const errorMessage = res. || "Login";
+       // const errorMessage = error.message || "Login";
         Swal.fire ({
           icon: "error",
           title: "Login failed.",
-          // text: errorMessage
+          text: "Login failed"
         })
       })
       .finally(()=> {

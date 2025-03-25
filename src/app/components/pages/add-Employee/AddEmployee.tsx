@@ -9,13 +9,17 @@ import { InputIcon } from 'primereact/inputicon';
 import { FilterMatchMode } from 'primereact/api';
 import ExpandableText from '../Exapnd/ExpandableText';
 import AddEditProject from '../../popup/AddEditProject';
-import { RootState } from '../../../../store';
 import { useDispatch, useSelector } from 'react-redux';
 import { employeeDataById } from '../../../Reducers/getDataListSlice';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import { Loader } from '../../constants/loader/Loader';
+import { Document, Packer, Paragraph, Table, TableCell, TableRow, WidthType, Header, Footer, TextRun, AlignmentType, BorderStyle, ShadingType } from "docx";
+import { saveAs } from "file-saver";
+
 
 const AddEmployee = () => {
+  const employeeData = useSelector((State: any) => State.employeeList.employeeData);
+  const employeeArray = Array.isArray(employeeData) ? employeeData : [employeeData];
   const [value, setValue] = useState({
     Name: '',
     TitleRole: '',
@@ -31,11 +35,13 @@ const AddEmployee = () => {
     ATiEndPresent: false,
 
   });
+  console.log(employeeArray, "employee data");
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const [loading, setLoading] = useState(true);
   const [projectList, setProjectList] = useState<any[]>([]);
   const { id } = useParams<{ id: string }>();
   const employeeId = Number(id);
+  const [projectId, setProjectId] = useState<number | null>(null);
   const [globalFilterValue, setGlobalFilterValue] = useState<string>('');
   const [filters, setFilters] = useState<DataTableFilterMeta>({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -71,7 +77,6 @@ const AddEmployee = () => {
         try {
           setLoading(true);
           const response = await dispatch(employeeDataById(employeeId));
-          console.log(response, "response");
           if (response?.payload) {
             const formattedWorkStartYear = response.payload.WorkStartYear ? response.payload.WorkStartYear.split('T')[0] : ''
             const formattedWorkEndYear = response.payload.WorkEndYear ? response.payload.WorkEndYear.split('T')[0] : ''
@@ -133,8 +138,254 @@ const AddEmployee = () => {
       </div>
     );
   };
+  const handleEdit = async (projectId: number) => {
+    setProjectId(projectId);
+  };
 
   const header = renderHeader();
+
+  const exportWord = () => {
+    const header = new Header({
+      children: [
+        new Table({
+          width: {
+            size: 100,
+            type: WidthType.PERCENTAGE,
+          },
+          rows: [
+            new TableRow({
+              children: [
+                // Left cell with placeholder image and border
+                new TableCell({
+                  borders: {
+                    top: { style: BorderStyle.SINGLE, size: 1, color: "000000" },
+                    bottom: { style: BorderStyle.SINGLE, size: 1, color: "000000" },
+                    left: { style: BorderStyle.SINGLE, size: 1, color: "000000" },
+                    right: { style: BorderStyle.SINGLE, size: 1, color: "000000" },
+                  },
+                  width: {
+                    size: 18,
+                    type: WidthType.PERCENTAGE,
+                  },
+                  children: [
+                    new Paragraph({
+                      alignment: AlignmentType.CENTER,
+                      children: [
+                        new TextRun({
+                          text: "Placeholder Image",
+                          font: "Arial Narrow",
+                          size: 24,
+                          color: "000000",
+                        }),
+                      ],
+                    }),
+                  ],
+                }),
+
+                // Right-aligned text with no border
+                new TableCell({
+                  borders: {
+                    top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                    bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                    left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                    right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                  },
+                  width: {
+                    size: 82, // Remaining percentage
+                    type: WidthType.PERCENTAGE,
+                  },
+                  children: [
+                    new Paragraph({
+                      alignment: AlignmentType.RIGHT,
+                      children: [
+                        new TextRun({
+                          text: "[PLACEHOLDER] Client Name",
+                          font: "Arial Narrow",
+                          size: 18,
+                          bold: true,
+                        }),
+                      ],
+                    }),
+                    new Paragraph({
+                      alignment: AlignmentType.RIGHT,
+                      children: [
+                        new TextRun({
+                          text: "[PLACEHOLDER] RFP Name - [PLACEHOLDER] RFP Number",
+                          font: "Arial Narrow",
+                          size: 18,
+                          bold: true,
+                        }),
+                      ],
+                    }),
+                  ],
+                }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    });
+
+    const table = new Table({
+      columnWidths: [100, 100,100],
+      rows: employeeArray.flatMap((item: any) => [
+        new TableRow({
+          children: [
+            new TableCell({
+              borders: {
+                top: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
+                bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                left: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
+                right: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
+              },
+              width: { size: 3505, type: WidthType.DXA },
+              shading: { fill: "CCFFCC" }, // Light Green Background
+              children: [
+                new Paragraph({
+                  children: [
+                    new TextRun({
+                      text : "12. NAME",
+                      size: 13,
+                      font:"Arial",
+                      
+                    }),
+                  ],
+                }),
+              ],
+            }),
+            new TableCell({
+              borders: {
+                top: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
+                bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                left: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
+                right: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
+              },
+              width: { size: 5505, type: WidthType.DXA },
+              children: [
+                new Paragraph({
+                  children: [
+                    new TextRun({
+                      text:  "13. ROLE IN THIS CONTRACT",
+                      size: 13,
+                      font:"Arial"
+                    })                 
+                  ]
+                })
+              ],
+            }),
+          ],
+        }),
+        new TableRow({
+          children: [
+            new TableCell({
+              borders: {
+                top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                bottom: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
+                left: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
+                right: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
+              },
+              width: { size: 3505, type: WidthType.DXA },
+              shading: { fill: "CCFFCC" },
+              children: [
+                new Paragraph({
+                  children: [
+                    new TextRun({
+                      text: item.Name || "",
+                      bold: true,
+                      font: "calibri",
+                      size: 22
+                    }),
+                  ]
+                })
+              ],
+            }),
+            new TableCell({
+              borders: {
+                top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                bottom: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
+                left: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
+                right: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
+              },
+              width: { size: 5505, type: WidthType.DXA },
+              children: [
+                new Paragraph({
+                  children: [
+                    new TextRun ({
+                      text: item.TitleRole || "",
+                      bold: true,
+                      font: "calibri",
+                      size: 22
+                    })
+                  ]
+                })
+              ]
+            }),
+          ],
+        }),
+      ]),
+    });
+
+    const footer = new Footer({
+      children: [
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: "Page ",
+              bold: true,
+            }),
+            new TextRun({
+              children: ["PAGE_NUMBER"],
+            }),
+            new TextRun({
+              text: " of ",
+              bold: true,
+            }),
+            new TextRun({
+              children: ["NUM_PAGES"],
+            }),
+          ],
+          alignment: AlignmentType.CENTER,
+        }),
+      ],
+    });
+    const doc = new Document({
+      sections: [
+        {
+          headers: { default: header },
+          footers: { default: footer },
+          children: [
+            new Paragraph({
+              alignment: AlignmentType.CENTER,
+              border: {
+                top: { size: 3, color: "000000", style: BorderStyle.SINGLE },
+                bottom: { size: 3, color: "000000", style: BorderStyle.SINGLE },
+                left: { size: 3, color: "000000", style: BorderStyle.SINGLE },
+                right: { size: 3, color: "000000", style: BorderStyle.SINGLE },
+              },
+              shading: { fill: "D0E9F7" },
+              spacing:{
+                after:50
+              },
+              children: [
+                new TextRun({
+                  text: "E. RESUMES OF KEY PERSONNEL PROPOSED FOR THIS CONTRACT",
+                  color: "000000",
+                  bold: true,
+                  size: 16,
+                  font: "Arial Narrow",
+                }),
+              ],
+            }),
+            table
+          ],
+        },
+      ],
+    });
+
+    Packer.toBlob(doc).then(blob => {
+      saveAs(blob, "EmployeeDocument.docx");
+    });
+  }
 
   return (
     <>
@@ -143,7 +394,7 @@ const AddEmployee = () => {
         <div className='heading'>
           <h3>Add Employee</h3>
         </div>
-
+        <button onClick={exportWord}>Export to Word</button>
         <form className='row'>
           <div className='col-md-12'>
             <div className='panel panel-default'>
@@ -432,7 +683,9 @@ const AddEmployee = () => {
                     <button type='button'
                       className='btn btn-edit-delete bg-purple m-1 '
                       data-bs-toggle="modal"
-                      data-bs-target="#addProjectModal">
+                      data-bs-target="#addProjectModal"
+                      onClick={() => handleEdit(rowData.Id)}
+                    >
                       Edit
                     </button>
 
@@ -597,7 +850,7 @@ const AddEmployee = () => {
 
           </div>
         </form>
-        <AddEditProject />
+        <AddEditProject projectId={projectId} />
       </div>
     </>
   )

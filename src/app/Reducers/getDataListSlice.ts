@@ -7,9 +7,11 @@ interface EmployeeListState {
     employeeListData: any[];
     profileListData: any[];
     archiveEmployeeListData: any[];
-    employeeId : number | null;
-    employeeCount : number | null;
-    archivedCount : number | null;
+    employeeId: number | null;
+    projectId: number | null;
+    employeeCount: number | null;
+    archivedCount: number | null;
+    employeeData:any[];
 }
 
 const initialState: EmployeeListState = {
@@ -19,8 +21,10 @@ const initialState: EmployeeListState = {
     profileListData: [],
     archiveEmployeeListData: [],
     employeeId: null,
+    projectId: null,
     employeeCount: null,
-    archivedCount: null
+    archivedCount: null,
+    employeeData: []
 };
 
 export const employeeListData1 = createAsyncThunk(
@@ -33,8 +37,8 @@ export const employeeListData1 = createAsyncThunk(
             if (response.data) {
                 const employeeData = response.data.Response || [];
                 return {
-                    employeeList : employeeData,
-                    employeeCount : employeeData.length
+                    employeeList: employeeData,
+                    employeeCount: employeeData.length
                 }
             }
         } catch (error: any) {
@@ -50,10 +54,10 @@ export const archivedListData = createAsyncThunk(
                 `${process.env.REACT_APP_BASE_URL}/api/myprofile/archivedemployee/`,
             );
             if (response.data) {
-                const archivedData =  response.data.Response || [];
+                const archivedData = response.data.Response || [];
                 return {
-                    employeeList : archivedData,
-                    archivedCount : archivedData.length
+                    employeeList: archivedData,
+                    archivedCount: archivedData.length
                 }
             }
         } catch (error: any) {
@@ -67,6 +71,21 @@ export const employeeDataById = createAsyncThunk(
         try {
             const response = await apiClient.get(
                 `${process.env.REACT_APP_BASE_URL}/api/employee/${employeeId}`,
+            );
+            if (response.data) {
+                return response.data.Response || [];             
+            }
+        } catch (error: any) {
+            return { success: false, error: error.message };
+        }
+    }
+);
+export const projectDataById = createAsyncThunk(
+    'employee/projectById',
+    async (projectId: number) => {
+        try {
+            const response = await apiClient.get(
+                `${process.env.REACT_APP_BASE_URL}/api/employeeproject/${projectId}`,
             );
             if (response.data) {
                 return response.data.Response || [];
@@ -127,6 +146,20 @@ const employeeListSlice = createSlice({
                 state.status = 'error';
                 state.error = action.error.message ?? "Unknown error";
             });
+        builder
+            .addCase(employeeDataById.pending, (state) => {
+                state.status = 'loading';
+                state.error = "";
+            })
+            .addCase(employeeDataById.fulfilled, (state, action) => {
+                state.status = 'idle';
+                state.error = "";
+                state.employeeData =  action.payload;
+            })
+            .addCase(employeeDataById.rejected, (state, action) => {
+                state.status = 'error';
+                state.error = action.error.message ?? "Unknown error";
+            });
 
         builder
             .addCase(profileListData1.pending, (state) => {
@@ -139,6 +172,19 @@ const employeeListSlice = createSlice({
                 state.profileListData = action.payload;
             })
             .addCase(profileListData1.rejected, (state, action) => {
+                state.status = 'error';
+                state.error = action.error.message ?? "Unknown error";
+            });
+        builder
+            .addCase(projectDataById.pending, (state) => {
+                state.status = 'loading';
+                state.error = "";
+            })
+            .addCase(projectDataById.fulfilled, (state, action) => {
+                state.status = 'idle';
+                state.error = "";
+            })
+            .addCase(projectDataById.rejected, (state, action) => {
                 state.status = 'error';
                 state.error = action.error.message ?? "Unknown error";
             });

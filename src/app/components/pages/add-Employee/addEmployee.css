@@ -46,3 +46,21 @@
 .p-datatable.p-datatable-gridlines .p-paginator-bottom {
     border-width: 0 0px 0px 0px;
 }
+.btn-save{
+    color: #fff;
+    border-radius: 20px;
+    background-color: #6357ae;
+    border-color: #6357ae;
+    border: none;
+    font-size: 13px;
+    padding: 6px 16px;
+}
+.btn-cancel{
+    color: #333;
+    border-radius: 20px;
+    background-color: #fff;
+
+    border-color: #eaeaea;
+    font-size: 13px;
+    padding: 6px 16px;
+}

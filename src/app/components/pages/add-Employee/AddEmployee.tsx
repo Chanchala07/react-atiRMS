@@ -15,19 +15,89 @@ import { ThunkDispatch } from '@reduxjs/toolkit';
 import { Loader } from '../../constants/loader/Loader';
 import { Document, Packer, Paragraph, Table, TableCell, TableRow, WidthType, Header, Footer, TextRun, AlignmentType, BorderStyle, ShadingType } from "docx";
 import { saveAs } from "file-saver";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import Swal from 'sweetalert2';
+import { addEmployee } from '../../../Reducers/postDataSlice';
+
+interface FormValues {
+  employeeId?: number;
+  name: string;
+  titleRole?: string;
+  companyLocation?: string;
+  education?: string;
+  certificatesLicenses?: string;
+  otherQualification?: string;
+  workStartYear?: Date | null;
+  workEndYear?: Date | null;
+  workEndPresent: boolean;
+  aTIStartYear?: Date | null;
+  aTIEndYear?: Date | null;
+  aTiEndPresent: boolean;
+  objAttchLogo: {
+    id: number;
+    entityType: number;
+    entityId: number;
+    title?: string | null;
+    attachmentUniqueId?: string | null;
+    description?: string | null;
+    tag?: string | null;
+    fileName?: string | null;
+    fileExt?: string | null;
+    mediaType?: string | null;
+    mediaString?: string | null;
+    isTempAttachment: boolean;
+    absoluteURL: string;
+    subCategoryName?: string | null
+  };
+}
+
+
+const schema = yup.object({
+  employeeId: yup.number().optional(),
+  name: yup.string().required("Name is required."),
+  titleRole: yup.string().optional(),
+  companyLocation: yup.string().optional(),
+  education: yup.string().optional(),
+  certificatesLicenses: yup.string().optional(),
+  otherQualification: yup.string().optional(),
+  workStartYear: yup.date().nullable().optional(),
+  workEndYear: yup.date().nullable().optional(),
+  workEndPresent: yup.boolean().default(false),
+  aTIStartYear: yup.date().nullable().optional(),
+  aTIEndYear: yup.date().nullable().optional(),
+  aTiEndPresent: yup.boolean().default(false),
+  objAttchLogo: yup.object({
+    id: yup.number().optional().default(0),
+    entityType: yup.number().optional().default(0),
+    entityId: yup.number().optional().default(0),
+    title: yup.string().nullable(),
+    attachmentUniqueId: yup.string().nullable(),
+    description: yup.string().nullable(),
+    tag: yup.string().nullable(),
+    fileName: yup.string().nullable(),
+    fileExt: yup.string().nullable(),
+    mediaType: yup.string().nullable(),
+    mediaString: yup.string().nullable(),
+    isTempAttachment: yup.boolean().default(false),
+    absoluteURL: yup.string().default(" "),
+    subCategoryName: yup.string().nullable()
+  }),
+});
 
 
 const AddEmployee = () => {
   const employeeData = useSelector((State: any) => State.employeeList.employeeData);
   const employeeArray = Array.isArray(employeeData) ? employeeData : [employeeData];
-  const [value, setValue] = useState({
-    Name: '',
+  const [value, setValueEmployee] = useState({
+    name: '',
     TitleRole: '',
     CompanyLocation: '',
     Education: '',
     CertificatesLicenses: '',
     OtherQualification: '',
-    WorkStartYear: '',
+    workStartYear: '',
     WorkEndYear: '',
     WorkEndPresent: false,
     ATIStartYear: '',
@@ -35,7 +105,18 @@ const AddEmployee = () => {
     ATiEndPresent: false,
 
   });
-  console.log(employeeArray, "employee data");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    getValues,
+    reset,
+    setValue,
+  } = useForm<FormValues>({
+    resolver: yupResolver(schema),
+    defaultValues: { name: value?.name }
+  });
+
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const [loading, setLoading] = useState(true);
   const [projectList, setProjectList] = useState<any[]>([]);
@@ -77,25 +158,38 @@ const AddEmployee = () => {
         try {
           setLoading(true);
           const response = await dispatch(employeeDataById(employeeId));
+          localStorage.setItem("UserId", response.payload.UserId);
+
           if (response?.payload) {
-            const formattedWorkStartYear = response.payload.WorkStartYear ? response.payload.WorkStartYear.split('T')[0] : ''
-            const formattedWorkEndYear = response.payload.WorkEndYear ? response.payload.WorkEndYear.split('T')[0] : ''
-            const formattedATIStartYear = response.payload.ATIStartYear ? response.payload.ATIStartYear.split('T')[0] : ''
-            const formattedATIEndYear = response.payload.ATIEndYear ? response.payload.ATIEndYear.split('T')[0] : ''
-            setValue((prev) => ({
-              ...prev,
-              ...response.payload,
+            const workStartYearValue = response.payload.WorkStartYear
+            ? new Date(response.payload.WorkStartYear)
+            : null;
 
-              WorkStartYear: formattedWorkStartYear,
-              WorkEndYear: formattedWorkEndYear,
-              WorkEndPresent: response.payload.WorkEndPresent || false,
-              ATIStartYear: formattedATIStartYear,
-              ATIEndYear: formattedATIEndYear,
-              ATiEndPresent: response.payload.ATiEndPresent || false,
+            const workEndYearValue = response.payload.WorkEndYear
+              ? new Date(response.payload.WorkStartYear)
+              : null;
 
-            }));
+            const atiStartYearValue = response.payload.ATIStartYear
+              ? new Date(response.payload.ATIStartYear)
+              : null;
 
+            const atiEndYearValue = response.payload.ATIEndYear
+              ? new Date(response.payload.ATIEndYear)
+              : null;
+
+            setValue("name", response.payload.Name);
+            setValue("titleRole", response.payload.TitleRole || "");
+            setValue("companyLocation", response.payload.CompanyLocation || "");
+            setValue("education", response.payload.Education || "");
+            setValue("certificatesLicenses", response.payload.CertificatesLicenses || "");
+            setValue("otherQualification", response.payload.OtherQualification || "");
+            setValue("workStartYear", workStartYearValue);
+            setValue("workEndYear", workEndYearValue);
+            setValue("aTIStartYear", atiStartYearValue);
+            setValue("aTIEndYear", atiEndYearValue);
+            setValue("objAttchLogo", response.payload.objAttchLogo);
             setProjectList(response.payload.proejctList);
+      
           }
           setLoading(false);
         }
@@ -111,7 +205,7 @@ const AddEmployee = () => {
 
   const handleChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
-    setValue((prev) => ({
+    setValueEmployee((prev) => ({
       ...prev,
       [name]: value,
 
@@ -140,6 +234,7 @@ const AddEmployee = () => {
   };
   const handleEdit = async (projectId: number) => {
     setProjectId(projectId);
+    
   };
 
   const header = renderHeader();
@@ -226,103 +321,407 @@ const AddEmployee = () => {
       ],
     });
 
-    const table = new Table({
-      columnWidths: [100, 100,100],
-      rows: employeeArray.flatMap((item: any) => [
+    const rows: TableRow[] = [];
+
+    rows.push(
+      new TableRow({
+        children: [
+          new TableCell({
+            shading: { fill: "CCFFCC" },
+            margins: { left: 100, right: 100, top: 50 },
+            width: {
+              size: 4000, // 33% of table width
+              type: WidthType.DXA,
+            },
+            children: [
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: "12. NAME",
+                    size: 13,
+                    font: "Arial",
+                  }),
+                ],
+              })
+            ],
+          }),
+          new TableCell({
+            margins: { left: 100, right: 100, top: 50 },
+            width: {
+              size: 3500,
+              type: WidthType.DXA,
+            },
+            children: [
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: "13. ROLE IN THIS CONTRACT",
+                    size: 13,
+                    font: "Arial",
+                  }),
+                ],
+              })
+            ],
+          }),
+          new TableCell({
+            width: {
+              size: 3500,
+              type: WidthType.DXA,
+            },
+            children: [
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: "14. YEARS EXPERIENCE",
+                    size: 13,
+                    font: "Arial",
+                  }),
+                ],
+              })
+            ],
+          })
+        ],
+      }),
+      new TableRow({
+        children: [
+          new TableCell({
+            margins: { left: 100, right: 100 },
+            shading: { fill: "CCFFCC" },
+            children: [
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: "Anjali",
+                    size: 22,
+                    font: "Calibri",
+                    bold: true
+                  }),
+                ],
+              })
+            ],
+          }),
+          new TableCell({
+            margins: { left: 100, right: 100 },
+            children: [
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: "Enter all relevant titles and roles you have held. (Ex: Env Scientist and GIS Specialist, Project Manager and Geologist)",
+                    size: 22,
+                    font: "Calibri",
+                    bold: true
+                  }),
+                ],
+              })
+            ],
+          }),
+          new TableCell({
+            children: [
+              new Table({
+                rows: [
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            children: [
+                              new TextRun({
+                                text: "a. TOTAL:",
+                                size: 13,
+                                font: "Arial",
+                              }),
+                            ],
+                          }),
+                          new Paragraph({
+                            alignment: AlignmentType.CENTER,
+                            children: [
+                              new TextRun({
+                                text: "2",
+                                font: "arial narrow",
+                                size: 24,
+                              }),
+                            ],
+                          }),
+                        ],
+                      }),
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            children: [
+                              new TextRun({
+                                text: "b. CURRENT FIRM:",
+                                size: 13,
+                                font: "Arial",
+                              }),
+                            ],
+                          }),
+                          new Paragraph({
+                            alignment: AlignmentType.CENTER,
+                            children: [
+                              new TextRun({
+                                text: "15",
+                                font: "arial narrow",
+                                size: 24,
+                              }),
+                            ],
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                ],
+              })
+            ],
+          })
+        ],
+      }),
+      new TableRow({
+        children: [
+          new TableCell({
+            columnSpan: 3, //
+            children: [
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: "15. FIRM NAME AND LOCATION (City and State)",
+                    size: 13,
+                    font: "Arial",
+                  }),
+                ],
+              })
+            ],
+          }),
+        ]
+      }),
+      new TableRow({
+        children: [
+          new TableCell({
+            margins: { left: 100, right: 100 },
+            columnSpan: 3,
+            children: [
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: "Name, city, and state (two letter identifier) of the ATI/DGI office where you currently work. (Ex: ATI, Inc., Columbia, MD)",
+                    size: 22,
+                    font: "Arial",
+                  }),
+                ],
+              })
+            ],
+          }),
+        ]
+      }),
+      new TableRow({
+        children: [
+          new TableCell({
+            width: {
+              size: 4000, // Same width as "NAME"
+              type: WidthType.DXA,
+            },
+            children: [
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: "16. EDUCATION (Degree and Specialization)",
+                    size: 13,
+                    font: "Arial",
+                  }),
+                ],
+              })
+            ],
+          }),
+          new TableCell({
+            width: {
+              size: 7000,
+              type: WidthType.DXA,
+            },
+            columnSpan: 2,
+            children: [
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: "17. CURRENT PROFESSIONAL REGISTRATION (State and Discipline)",
+                    size: 13,
+                    font: "Arial",
+                  }),
+                ],
+              })
+            ],
+          }),
+
+        ],
+      }),
+      new TableRow({
+        children: [
+          new TableCell({
+            width: {
+              size: 4000, // Same width as "NAME"
+              type: WidthType.DXA,
+            },
+            children: [
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: "Provide information on relevant academic degree(s) received on separate lines. Indicate the degree type, university/where the degree is from, graduation date/year, area(s) of specialization, and if it is accredited. (Ex. MSc, Geology, UMD, 2006 or MS. Environmental Eng., Johns Hopkins U., 2015 (ABET))",
+                    size: 13,
+                    font: "Arial",
+                  }),
+                ],
+              })
+            ],
+          }),
+          new TableCell({
+            width: {
+              size: 7000,
+              type: WidthType.DXA,
+            },
+            columnSpan: 2,
+            children: [
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: "Provide information on current relevant professional registration(s) in a State or possession of the United States including type and state. List each state separately for multiple certifications. (Ex. Professional Geologist, MD or Professional Engineer – MD (#52009, 2019))",
+                    size: 13,
+                    font: "Arial",
+                  }),
+                ],
+              })
+            ],
+          }),
+
+        ],
+      }),
+      new TableRow({
+        children: [
+          new TableCell({
+            columnSpan: 3, //
+            children: [
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: "18. OTHER PROFESSIONAL QUALIFICATIONS (Publications, Organizations, Training, Awards, etc.)",
+                    size: 13,
+                    font: "Arial",
+                  }),
+                ],
+              })
+            ],
+          }),
+        ]
+      }),
+      new TableRow({
+        children: [
+          new TableCell({
+            columnSpan: 3,
+            children: [
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: "Provide information on any other professional qualifications relating to this contract not previously entered, such as additional education, professional registration, publications, organizational memberships, certifications, training, awards, and foreign language capabilities.",
+                    size: 13,
+                    font: "Arial",
+                  }),
+                ],
+              })
+            ],
+          }),
+        ]
+      }),
+
+      new TableRow({
+        children: [
+          new TableCell({
+            columnSpan: 3,
+            children: [
+              new Paragraph({
+                shading: { fill: "337AB7" },
+                children: [
+                  new TextRun({
+                    text: "19. RELEVANT PROJECTS",
+                    size: 13,
+                    font: "Arial",
+                  }),
+                ],
+              })
+            ],
+          }),
+        ],
+      }),
+    );
+    for (let i = 0; i < 5; i++) {
+      // Nested table for each row
+      const nestedTable = new Table({
+        rows: [
+          new TableRow({
+            children: [
+              new TableCell({
+                columnSpan: 3,
+                children: [
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: "a",
+                        size: 13,
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+              new TableCell({
+                //columnSpan:3,
+                children: [
+
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: `(1) TITLE AND LOCATION (City and State)`,
+                        size: 13,
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+              new TableCell({
+                //columnSpan:3,
+                children: [
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: `(2) YEAR COMPLETED`,
+                        size: 13,
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            ],
+          }),
+        ],
+      });
+      rows.push(
         new TableRow({
           children: [
             new TableCell({
-              borders: {
-                top: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
-                bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-                left: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
-                right: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
+              width: {
+                size: 4000, // Fixed width for the cell containing the nested table, same as the "NAME" column
+                type: WidthType.DXA,
               },
-              width: { size: 3505, type: WidthType.DXA },
-              shading: { fill: "CCFFCC" }, // Light Green Background
               children: [
-                new Paragraph({
-                  children: [
-                    new TextRun({
-                      text : "12. NAME",
-                      size: 13,
-                      font:"Arial",
-                      
-                    }),
-                  ],
-                }),
-              ],
-            }),
-            new TableCell({
-              borders: {
-                top: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
-                bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-                left: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
-                right: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
-              },
-              width: { size: 5505, type: WidthType.DXA },
-              children: [
-                new Paragraph({
-                  children: [
-                    new TextRun({
-                      text:  "13. ROLE IN THIS CONTRACT",
-                      size: 13,
-                      font:"Arial"
-                    })                 
-                  ]
-                })
+                nestedTable, // Insert the nested table in this cell
               ],
             }),
           ],
-        }),
-        new TableRow({
-          children: [
-            new TableCell({
-              borders: {
-                top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-                bottom: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
-                left: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
-                right: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
-              },
-              width: { size: 3505, type: WidthType.DXA },
-              shading: { fill: "CCFFCC" },
-              children: [
-                new Paragraph({
-                  children: [
-                    new TextRun({
-                      text: item.Name || "",
-                      bold: true,
-                      font: "calibri",
-                      size: 22
-                    }),
-                  ]
-                })
-              ],
-            }),
-            new TableCell({
-              borders: {
-                top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-                bottom: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
-                left: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
-                right: { style: BorderStyle.SINGLE, size: 3, color: "000000" },
-              },
-              width: { size: 5505, type: WidthType.DXA },
-              children: [
-                new Paragraph({
-                  children: [
-                    new TextRun ({
-                      text: item.TitleRole || "",
-                      bold: true,
-                      font: "calibri",
-                      size: 22
-                    })
-                  ]
-                })
-              ]
-            }),
-          ],
-        }),
-      ]),
+        })
+      );
+    }
+    const mainTable = new Table({
+      width: {
+        size: 10000,
+        type: WidthType.DXA,
+      },
+
+      rows: rows,
     });
 
     const footer = new Footer({
@@ -348,35 +747,37 @@ const AddEmployee = () => {
         }),
       ],
     });
+
     const doc = new Document({
       sections: [
         {
           headers: { default: header },
           footers: { default: footer },
           children: [
+
             new Paragraph({
               alignment: AlignmentType.CENTER,
               border: {
-                top: { size: 3, color: "000000", style: BorderStyle.SINGLE },
-                bottom: { size: 3, color: "000000", style: BorderStyle.SINGLE },
-                left: { size: 3, color: "000000", style: BorderStyle.SINGLE },
-                right: { size: 3, color: "000000", style: BorderStyle.SINGLE },
+                top: { size: 3, color: "dee2e6", style: BorderStyle.SINGLE },
+                bottom: { size: 3, color: "dee2e6", style: BorderStyle.SINGLE },
+                left: { size: 3, color: "dee2e6", style: BorderStyle.SINGLE },
+                right: { size: 3, color: "dee2e6", style: BorderStyle.SINGLE },
               },
-              shading: { fill: "D0E9F7" },
-              spacing:{
-                after:50
-              },
+              shading: { fill: "337AB7" },
+              indent: { left: 50, right: 50 },
+              // margin: {  top: 50 }, 
               children: [
                 new TextRun({
                   text: "E. RESUMES OF KEY PERSONNEL PROPOSED FOR THIS CONTRACT",
-                  color: "000000",
+                  color: "FFFFFF",
                   bold: true,
                   size: 16,
                   font: "Arial Narrow",
                 }),
               ],
             }),
-            table
+
+            mainTable,
           ],
         },
       ],
@@ -387,6 +788,40 @@ const AddEmployee = () => {
     });
   }
 
+  const onSubmit = (values: FormValues) => {
+    setLoading(true);
+    console.log("values in form", values);
+    const formattedValues = {
+      ...values,
+      Id: employeeId,
+      workStartYear: values.workStartYear ? new Date(values.workStartYear) : null,
+      workEndYear: values.workEndYear ? new Date(values.workEndYear) : null,
+      aTIStartYear: values.aTIStartYear ? new Date(values.aTIStartYear) : null,
+      aTIEndYear: values.aTIEndYear ? new Date(values.aTIEndYear) : null,
+      objAttchLogo: values.objAttchLogo
+
+    };
+    console.log(formattedValues, "formatted values");
+    dispatch(addEmployee(formattedValues))
+      .then((res: any) => {
+        console.log("res", res);
+        Swal.fire({
+          icon: "success",
+          title: "Employee saved successfully.",
+        })
+      })
+      .catch((error: any) => {
+        console.log("Error response", error);
+        Swal.fire({
+          icon: "error",
+          title: "Employee failed.",
+          text: "Employee failed"
+        })
+      })
+      .finally(()=>{
+        setLoading(false);
+      })
+  }
   return (
     <>
       {loading ? <Loader /> : ""}
@@ -394,8 +829,8 @@ const AddEmployee = () => {
         <div className='heading'>
           <h3>Add Employee</h3>
         </div>
-        <button onClick={exportWord}>Export to Word</button>
-        <form className='row'>
+        <button onClick={exportWord} className='btn-save'>Export to Word</button>
+        <form className='row' onSubmit={handleSubmit(onSubmit)}>
           <div className='col-md-12'>
             <div className='panel panel-default'>
               <div className='panel-body'>
@@ -406,27 +841,23 @@ const AddEmployee = () => {
                       <input
                         type='text'
                         className='form-control'
-                        id='userName'
-                        name='userName'
-                        required
-                        aria-label='Employee Name'
-                        value={value.Name}
-                        onChange={handleChange}
+                        {...register("name")}
                       />
+                      {errors.name && (
+                        <p className='error error-text'>
+                          {errors.name?.message}
+                        </p>
+                      )}
                     </div>
-                  </div>
+                  </div>                
+
                   <div className='col-md-4 px-2'>
                     <div className='mb-3'>
                       <label className='form-label'>Title/Role <span className='text-danger'>*</span></label>
                       <input
                         type='text'
                         className='form-control'
-                        id='titleRole'
-                        name='titleRole'
-                        required
-                        aria-label='Employee Title or Role'
-                        value={value.TitleRole}
-                        onChange={handleChange}
+                        {...register("titleRole")}                    
                       />
                     </div>
                   </div>
@@ -436,12 +867,7 @@ const AddEmployee = () => {
                       <input
                         type='text'
                         className='form-control'
-                        id='companyLocation'
-                        name='companyLocation'
-                        required
-                        aria-label='Company and Location'
-                        value={value.CompanyLocation}
-                        onChange={handleChange}
+                        {...register("companyLocation")}                    
                       />
                     </div>
                   </div>
@@ -450,14 +876,9 @@ const AddEmployee = () => {
                       <label className='form-label'>Education/Degrees <span className='text-danger'>*</span></label>
                       <textarea
                         className='form-control'
-                        id='educationDegree'
-                        name='educationDegree'
                         rows={3}
                         style={{ resize: 'none' }}
-                        required
-                        aria-label='Education or Degree '
-                        value={value.Education}
-                        onChange={handleChange}
+                        {...register("education")}                 
                       />
                     </div>
                   </div>
@@ -466,14 +887,9 @@ const AddEmployee = () => {
                       <label className='form-label'>Certifications and Licenses <span className='text-danger'>*</span></label>
                       <textarea
                         className='form-control'
-                        id='certificationLicenses'
-                        name='certificationLicenses'
                         rows={3}
                         style={{ resize: 'none' }}
-                        required
-                        aria-label='Certifications and Licenses'
-                        value={value.CertificatesLicenses}
-                        onChange={handleChange}
+                        {...register("certificatesLicenses")}                    
                       />
                     </div>
                   </div>
@@ -482,14 +898,9 @@ const AddEmployee = () => {
                       <label className='form-label'>Other Professional Qualifications <span className='text-danger'>*</span></label>
                       <textarea
                         className='form-control'
-                        id='otherProfessional'
-                        name='otherProfessional'
                         rows={3}
                         style={{ resize: 'none' }}
-                        required
-                        aria-label='Other Professional Qualifications'
-                        value={value.OtherQualification}
-                        onChange={handleChange}
+                        {...register("otherQualification")}                     
                       />
                     </div>
                   </div>
@@ -497,14 +908,9 @@ const AddEmployee = () => {
                     <div className='mb-3'>
                       <label className='form-label'>Work Start Year <span className='text-danger'>*</span></label>
                       <input
-                        type='date'
-                        className='form-control'
-                        id='workStartYear'
-                        name='workStartYear'
-                        required
-                        aria-label='work StartYear'
-                        value={value.WorkStartYear}
-                        onChange={handleChange}
+                        type='month'
+                        className='form-control'                      
+                        {...register("workStartYear")}                                    
                       />
                     </div>
                   </div>
@@ -512,13 +918,9 @@ const AddEmployee = () => {
                     <div className='mb-3'>
                       <label className='form-label'>Work End Year</label>
                       <input
-                        type='date'
+                        type='month'
                         className='form-control'
-                        id='workEndYear'
-                        name='workEndYear'
-                        aria-label='work endYear'
-                        value={value.WorkEndYear}
-                        onChange={handleChange}
+                        {...register("workEndYear")}                    
                       />
                     </div>
                   </div>
@@ -530,18 +932,9 @@ const AddEmployee = () => {
                           className='form-check-input'
                           width={"10px"}
                           type='checkbox'
-                          id='isPresent'
-                          aria-label='Is Present'
-                          style={{ width: '25px', height: '25px' }}
-                          checked={value.WorkEndPresent}
-                          onChange={(e) =>
-                            setValue((prev) => ({
-                              ...prev,
-                              WorkEndPresent: e.target.checked,
-                            }))
-                          }
+                          {...register("workEndPresent")}                       
+                          style={{ width: '25px', height: '25px' }}                       
                         />
-
                       </div>
                     </div>
                   </div>
@@ -550,11 +943,7 @@ const AddEmployee = () => {
                       <label className='form-label'>Years of Experience</label>
                       <input
                         type='text'
-                        className='form-control'
-                        id='yearExperience'
-                        name='yearExperience'
-                        required
-                        aria-label='Years of Experience'
+                        className='form-control'                       
                         disabled
                       />
                     </div>
@@ -563,14 +952,9 @@ const AddEmployee = () => {
                     <div className='mb-3'>
                       <label className='form-label'>ATI Start Year <span className='text-danger'>*</span></label>
                       <input
-                        type='date'
+                        type='month'
                         className='form-control'
-                        id='atiStartYear'
-                        name='atiStartYear'
-                        required
-                        aria-label='ati StartYear'
-                        value={value.ATIStartYear}
-                        onChange={handleChange}
+                        {...register("aTIStartYear")}                    
                       />
                     </div>
                   </div>
@@ -578,14 +962,11 @@ const AddEmployee = () => {
                     <div className='mb-3'>
                       <label className='form-label'>ATI End Year</label>
                       <input
-                        type='date'
+                        type='month'
                         className='form-control'
-                        id='atiEndYear'
-                        name='atiEndYear'
-                        aria-label='ati endYear  '
+                        {...register("aTIEndYear")}               
                         placeholder=''
-                        value={value.ATIEndYear}
-                        onChange={handleChange}
+                     
                       />
                     </div>
                   </div>
@@ -598,15 +979,9 @@ const AddEmployee = () => {
                           width={"10px"}
                           type='checkbox'
                           id='atiIsPresent'
-                          aria-label='Is Present'
                           style={{ width: '25px', height: '25px' }}
                           checked={value.ATiEndPresent}
-                          onChange={(e) =>
-                            setValue((prev) => ({
-                              ...prev,
-                              ATiEndPresent: e.target.checked,
-                            }))
-                          }
+                       
                         />
                       </div>
                     </div>
@@ -617,10 +992,7 @@ const AddEmployee = () => {
                       <input
                         type='text'
                         className='form-control'
-                        id='yearEmployer'
-                        name='yearEmployer'
-                        required
-                        aria-label='Years with Employer'
+                        name='yearEmployer'                      
                         disabled
                       />
                     </div>
@@ -754,6 +1126,7 @@ const AddEmployee = () => {
                   header="Role"
                   field='Role'
                   sortable
+                  style={{width: "50px"}}
                   body={(rowData) =>
                     <ExpandableText content={rowData.role} maxLength={60} ></ExpandableText>} />
 
@@ -847,7 +1220,11 @@ const AddEmployee = () => {
                     <ExpandableText content={rowData.Keyword10} maxLength={20}></ExpandableText>} />
               </DataTable>
             </div>
-
+            <div className='d-flex justify-content-end gap-2 mt-2'>
+              <Link to='/' className='btn-cancel'>Cancel</Link>
+              <button type='submit' className='btn-save'>Save</button>
+              {/* <button type='submit' className='btn-save'>Export</button> */}
+            </div>
           </div>
         </form>
         <AddEditProject projectId={projectId} />

@@ -6,60 +6,68 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { projectDataById } from '../../Reducers/getDataListSlice';
 import { useParams } from 'react-router-dom';
 import { ThunkDispatch } from '@reduxjs/toolkit';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { addProject } from '../../Reducers/postDataSlice';
+import Swal from 'sweetalert2';
 
 interface FormValues {
-  TitleandLocation: string;
-  Role: string;
-  ProjectChecked?: boolean;
-  ProfessionalService: string;
-  OngoingCheckedPS?: boolean;
-  NACheckedPS?: boolean;
-  AgePS?: number;
-  Construction: string;
-  OngoingCheckedCS?: boolean;
-  NACheckedCS?: boolean;
-  AgeCS?: number;
-  ProjectValue?: string;
-  Description: string;
-  Keyword1?: string;
-  Keyword2?: string;
-  Keyword3?: string;
-  Keyword4?: string;
-  Keyword5?: string;
-  Keyword6?: string;
-  Keyword7?: string;
-  Keyword8?: string;
-  Keyword9?: string;
-  Keyword10?: string;
+  id?: number;
+  employeeId: number;
+  titleandLocation: string;
+  role: string;
+  projectChecked?: boolean;
+  professionalService: string;
+  ongoingCheckedPS?: boolean;
+  nACheckedPS?: boolean;
+  agePS?: number;
+  construction: string;
+  ongoingCheckedCS?: boolean;
+  nACheckedCS?: boolean;
+  ageCS?: number;
+  projectValue?: string;
+  projectPosition?: number;
+  description: string;
+  keyword1?: string;
+  keyword2?: string;
+  keyword3?: string;
+  keyword4?: string;
+  keyword5?: string;
+  keyword6?: string;
+  keyword7?: string;
+  keyword8?: string;
+  keyword9?: string;
+  keyword10?: string;
 }
 const schema = yup.object().shape({
-  TitleandLocation: yup
+  employeeId: yup
+    .number()
+    .required("Employee Id is required"),
+  titleandLocation: yup
     .string()
     .required("Title and Location (city and state) is required."),
-  Role: yup
+  role: yup
     .string()
     .required("Role is required."),
-  ProfessionalService: yup
+  professionalService: yup
     .string()
     .required("Professional Services Year is required"),
-  Construction: yup
+  construction: yup
     .string()
     .required("Construction Year is required."),
-  Description: yup
+  description: yup
     .string()
     .required("Description and Specific Role is required.")
 });
 
-const AddEditProject = ({projectId}:{projectId:number | null}) => {
+const AddEditProject = ({ projectId }: { projectId: number | null }) => {
   const [loading, setLoading] = useState(false);
   const { id } = useParams<{ id: string }>();
-   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  const employeeId = Number(id);
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const {
     register,
     handleSubmit,
     formState: { errors },
-    getValues,
     reset,
     setValue,
   } = useForm<FormValues>({
@@ -67,7 +75,33 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
 
   });
   const onSubmit = (values: FormValues) => {
-
+    setLoading(true);
+    console.log("form values for project", values);
+    const data = {
+      ...values,
+      EmployeeId: employeeId,
+      Id: projectId
+    };
+    console.log(" form data before api call", data)
+    dispatch(addProject(data))
+      .then((res: any) => {
+        console.log("res project", res);
+        Swal.fire({
+          icon: "success",
+          title: "Project updated successfully.",
+        })
+      })
+      .catch((error: any) => {
+        console.log("Error response", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Error in project  saved"
+        })
+      })
+      .finally(() => {
+        setLoading(false);
+      })
   }
 
   useEffect(() => {
@@ -77,15 +111,40 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
           setLoading(true);
           const response = await dispatch(projectDataById(projectId));
           console.log(response, "response of project popup");
+          setValue("employeeId", response.payload.EmployeeId);
+          setValue("titleandLocation", response.payload.TitleandLocation);
+          setValue("role", response.payload.Role);
+          setValue("projectChecked", response.payload.Checked);
+          setValue("professionalService", response.payload.ProfessionalService);
+          setValue("ongoingCheckedPS", response.payload.OngoingCheckedPS);
+          setValue("nACheckedPS", response.payload.NACheckedPS);
+          setValue("agePS", response.payload.AgePS);
+          setValue("construction", response.payload.Construction);
+          setValue("ongoingCheckedCS", response.payload.OngoingCheckedCS);
+          setValue("nACheckedCS", response.payload.NACheckedCS);
+          setValue("ageCS", response.payload.AgeCS);
+          setValue("projectValue", response.payload.ProjectValue);
+          setValue("description", response.payload.Description);
+          setValue("keyword1", response.payload.Keyword1);
+          setValue("keyword2", response.payload.Keyword2);
+          setValue("keyword3", response.payload.Keyword3);
+          setValue("keyword4", response.payload.Keyword4);
+          setValue("keyword5", response.payload.Keyword5);
+          setValue("keyword6", response.payload.Keyword6);
+          setValue("keyword7", response.payload.Keyword7);
+          setValue("keyword8", response.payload.Keyword8);
+          setValue("keyword9", response.payload.Keyword9);
+          setValue("keyword10", response.payload.Keyword10);
           setLoading(false);
         }
         catch (error) {
-          console.log(error,"error")
+          console.log(error, "error")
+          setLoading(false);
         }
       }
     }
     fetchData()
-  },[projectId]);
+  }, [projectId]);
   return (
     <>
       {loading ? <Loader /> : ""}
@@ -104,18 +163,22 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="modal-body">
                 <div className='row'>
+                  <input
+                    className='form-control hidden'
+                    type='number'
+                    {...register("employeeId")}
+                  />
                   <div className='col-md-4'>
                     <div className='mb-3'>
                       <label className='form-label fw-bold fs-12'>Title and Location (city and state) <span className='text-danger'>*</span></label>
                       <input
                         className='form-control'
                         type='text'
-                       
-                        {...register("TitleandLocation")}
+                        {...register("titleandLocation")}
                       />
-                      {errors.TitleandLocation && (
+                      {errors.titleandLocation && (
                         <p className='error error-text'>
-                          {errors.TitleandLocation?.message}
+                          {errors.titleandLocation?.message}
                         </p>
                       )}
                     </div>
@@ -125,11 +188,11 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                       <label className='form-label fw-bold fs-12'>Role <span className='text-danger'>*</span></label>
                       <input className='form-control'
                         type='text'
-                        name='Role'
+                        {...register("role")}
                       />
-                      {errors.Role && (
+                      {errors.role && (
                         <p className='error error-text'>
-                          {errors.Role?.message}
+                          {errors.role?.message}
                         </p>
                       )}
                     </div>
@@ -143,6 +206,7 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                           width={"10px"}
                           type='checkbox'
                           style={{ width: '25px', height: '25px' }}
+                          {...register("projectChecked")}
                         />
                       </div>
                     </div>
@@ -152,11 +216,11 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                       <label className='form-label fw-bold fs-12'>Professional Services Year Completed<span className='text-danger'>*</span></label>
                       <input className='form-control'
                         type='text'
-                        name='ProfessionalService'
+                        {...register("professionalService")}
                       />
-                      {errors.ProfessionalService && (
+                      {errors.professionalService && (
                         <p className='error error-text'>
-                          {errors.ProfessionalService?.message}
+                          {errors.professionalService?.message}
                         </p>
                       )}
                     </div>
@@ -170,6 +234,7 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                           width={"10px"}
                           type='checkbox'
                           style={{ width: '25px', height: '25px' }}
+                          {...register("ongoingCheckedPS")}
                         />
                       </div>
                     </div>
@@ -183,6 +248,7 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                           width={"10px"}
                           type='checkbox'
                           style={{ width: '25px', height: '25px' }}
+                          {...register("nACheckedPS")}
                         />
                       </div>
                     </div>
@@ -192,9 +258,8 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                       <label className='form-label fw-bold fs-12'>Age PS</label>
                       <input className='form-control'
                         type='text'
-                        name='AgePS'
+                        {...register("agePS")}
                         disabled
-
                       />
                     </div>
                   </div>
@@ -203,11 +268,11 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                       <label className='form-label fw-bold fs-12'>Construction Year Completed<span className='text-danger'>*</span></label>
                       <input className='form-control'
                         type='text'
-                        name='Construction'
+                        {...register("construction")}
                       />
-                      {errors.Construction && (
+                      {errors.construction && (
                         <p className='error error-text'>
-                          {errors.Construction?.message}
+                          {errors.construction?.message}
                         </p>
                       )}
                     </div>
@@ -220,6 +285,7 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                           width={"10px"}
                           type='checkbox'
                           style={{ width: '25px', height: '25px' }}
+                          {...register("ongoingCheckedCS")}
                         />
                       </div>
                     </div>
@@ -232,6 +298,7 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                           width={"10px"}
                           type='checkbox'
                           style={{ width: '25px', height: '25px' }}
+                          {...register("nACheckedCS")}
                         />
                       </div>
                     </div>
@@ -241,6 +308,7 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                       <label className='form-label fw-bold fs-12'>Age CS</label>
                       <input className='form-control'
                         type='text'
+                        {...register("ageCS")}
                         disabled
                       />
                     </div>
@@ -250,6 +318,7 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                       <label className='form-label fw-bold fs-12'>Project Value</label>
                       <input className='form-control'
                         type='string'
+                        {...register("projectValue")}
                       />
                     </div>
                   </div>
@@ -259,11 +328,11 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                       <textarea className='form-control'
                         rows={4}
                         style={{ resize: "none" }}
-                        name='Description'
+                        {...register("description")}
                       />
-                      {errors.Description && (
+                      {errors.description && (
                         <p className='error error-text'>
-                          {errors.Description?.message}
+                          {errors.description?.message}
                         </p>
                       )}
                     </div>
@@ -273,7 +342,7 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                       <label className='form-label fw-bold fs-12'>Keyword 1</label>
                       <input className='form-control'
                         type='text'
-                        name='Keyword1'
+                        {...register("keyword1")}
                       />
                     </div>
                   </div>
@@ -282,7 +351,7 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                       <label className='form-label fw-bold fs-12'>Keyword 2</label>
                       <input className='form-control'
                         type='text'
-                        name='Keyword2'
+                        {...register("keyword2")}
                       />
                     </div>
                   </div>
@@ -291,7 +360,7 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                       <label className='form-label fw-bold fs-12'>Keyword 3</label>
                       <input className='form-control'
                         type='text'
-                        name='Keyword3'
+                        {...register("keyword3")}
                       />
                     </div>
                   </div>
@@ -300,7 +369,7 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                       <label className='form-label fw-bold fs-12'>Keyword 4</label>
                       <input className='form-control'
                         type='text'
-                        name='Keyword4'
+                        {...register("keyword4")}
                       />
                     </div>
                   </div>
@@ -309,7 +378,7 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                       <label className='form-label fw-bold fs-12'>Keyword 5</label>
                       <input className='form-control'
                         type='text'
-                        name='Keyword5'
+                        {...register("keyword5")}
                       />
                     </div>
                   </div>
@@ -318,7 +387,7 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                       <label className='form-label fw-bold fs-12'>Keyword 6</label>
                       <input className='form-control'
                         type='text'
-                        name='Keyword6'
+                        {...register("keyword6")}
                       />
                     </div>
                   </div>
@@ -327,7 +396,7 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                       <label className='form-label fw-bold fs-12'>Keyword 7</label>
                       <input className='form-control'
                         type='text'
-                        name='Keyword7'
+                        {...register("keyword7")}
                       />
                     </div>
                   </div>
@@ -336,7 +405,7 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                       <label className='form-label fw-bold fs-12'>Keyword 8</label>
                       <input className='form-control'
                         type='text'
-                        name='Keyword8'
+                        {...register("keyword8")}
                       />
                     </div>
                   </div>
@@ -345,7 +414,7 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                       <label className='form-label fw-bold fs-12'>Keyword 9</label>
                       <input className='form-control'
                         type='text'
-                        name='Keyword9'
+                        {...register("keyword9")}
                       />
                     </div>
                   </div>
@@ -354,7 +423,7 @@ const AddEditProject = ({projectId}:{projectId:number | null}) => {
                       <label className='form-label fw-bold fs-12'>Keyword 10</label>
                       <input className='form-control'
                         type='text'
-                        name='Keyword10'
+                        {...register("keyword10")}
                       />
                     </div>
                   </div>

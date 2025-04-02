@@ -26,7 +26,7 @@ const schema = yup.object().shape({
     .required("User name is required."),
   userPassword: yup
     .string()
-    .required("Password is required")
+    .required("Password is required.")
     .min(6, "The Password must be at least 6 characters long.")
     .max(16, "The password should be no more than 16 characters"),
 })
@@ -57,17 +57,18 @@ const LoginPage = () => {
     dispatch(userLogin(body))
       .unwrap()
       .then((res: any) => {
-        localStorage.setItem("UserRoleId",res.UserRoleId);
-        localStorage.setItem("FirstName",res.FirstName);
-        localStorage.setItem("UserRoleName",res.UserRoleName);
-        localStorage.setItem("UserId",res.Id);
-        if(res.UserRoleId === 1){
+        localStorage.setItem("LoggedInUserId", res.Id);
+        localStorage.setItem("UserRoleId", res.UserRoleId);
+        localStorage.setItem("FirstName", res.FirstName);
+        localStorage.setItem("UserRoleName", res.UserRoleName);
+
+        if (res.UserRoleId === 1) {
           navigate("/home-page/dashboard")
         }
-        else if (res.UserRoleId === 10 && res.EmployeeId > 0){
+        else if (res.UserRoleId === 10 && res.EmployeeId > 0) {
           navigate(`/home-page/add-employee/${res.EmployeeId}`);
         }
-        else{
+        else {
           navigate('/home-page/add-employee');
         }
         Swal.fire({
@@ -75,25 +76,25 @@ const LoginPage = () => {
           title: "Login successfully",
         });
       })
-      .catch((error:any) => {
+      .catch((error: any) => {
         console.log("Error response:", error);
 
-       // const errorMessage = error.message || "Login";
-        Swal.fire ({
+        // const errorMessage = error.message || "Login";
+        Swal.fire({
           icon: "error",
           title: "Login failed.",
           text: "Login failed"
         })
       })
-      .finally(()=> {
+      .finally(() => {
         setLoading(false);
       })
-      
+
   }
 
   return (
     <>
-    {loading ? <Loader/> : ""}
+      {loading ? <Loader /> : ""}
       <Header />
       <div className='Section'>
         <div className='container'>
@@ -110,7 +111,8 @@ const LoginPage = () => {
                           // name='userName'
                           placeholder='someone@nowhere.com'
                           {...register("userName")} />
-                        <FontAwesomeIcon icon={faEnvelope} className='fa-icon' />
+                        <FontAwesomeIcon icon={faEnvelope} className='fa-icon'
+                        />
 
                         {errors.userName && (
                           <p className='error error-text'>
@@ -126,9 +128,9 @@ const LoginPage = () => {
                       <div className='position-relative'>
                         <input className='form-control'
                           type='password'
-                          //name='password'
                           placeholder='Password'
-                          {...register("userPassword")} />
+                          {...register("userPassword")}
+                        />
                         <FontAwesomeIcon icon={faLock}
                           className='fa-icon ' />
 

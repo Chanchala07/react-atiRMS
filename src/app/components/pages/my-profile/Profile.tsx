@@ -3,7 +3,6 @@ import './profile.css';
 import { Link } from 'react-router-dom';
 import { DataTable, DataTableFilterMeta } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
@@ -28,12 +27,17 @@ const Profile = () => {
     UserPassword: { operator: 'and', constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
   });
   const [globalFilterValue, setGlobalFilterValue] = useState<string>('');
+  const userRoleId = localStorage.getItem("UserRoleId");
+  const userId = localStorage.getItem("LoggedInUserId");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        await dispatch(profileListData1());
+        const response = await dispatch(profileListData1());
+        const data = response.payload.find((user:any) => user.Id == userId);
+        console.log(response,"profile data"); 
+        console.log(data,"logged in user data");
         setLoading(false);
       } catch (error) {
         console.log(error, "error");
@@ -71,7 +75,7 @@ const Profile = () => {
   const header = renderHeader();
   return (
     <>
-      {loading ? <Loader/> : ""}
+      {loading ? <Loader /> : ""}
       <div className='content-wrapper'>
         <div className='border-bottom bg-gray'>
           <h3 className='text-profile d-flex justify-content-between align-items-center'>
@@ -81,36 +85,39 @@ const Profile = () => {
             </span>
           </h3>
         </div>
-        <div className='row'>
-          <div className="d-flex justify-content-between align-items-center">
-            <ul className="nav nav-tabs">
-              <li className="nav-item">
-                <a
-                  className={`nav-link ${activeTab === 'personalDetails' ? 'active' : ''}`}
-                  onClick={() => tabClick('personalDetails')}
-                  href="#"
-                >
-                  Personal Details
-                </a>
-              </li>
-              <li className="nav-item">
-                <a
-                  className={`nav-link ${activeTab === 'userDetails' ? 'active' : ''}`}
-                  onClick={() => tabClick('userDetails')}
-                  href="#"
-                >
-                  User Details
-                </a>
-              </li>
-            </ul>
-            <button type='button'
-              className='btn btn-primary btn-user'
-              data-bs-toggle="modal"
-              data-bs-target="#addUserModal">
-              Add New User
-            </button>
+
+        {userRoleId === "1" && (
+          <div className='row'>
+            <div className="d-flex justify-content-between align-items-center">
+              <ul className="nav nav-tabs">
+                <li className="nav-item">
+                  <a
+                    className={`nav-link ${activeTab === 'personalDetails' ? 'active' : ''}`}
+                    onClick={() => tabClick('personalDetails')}
+                    href="#"
+                  >
+                    Personal Details
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a
+                    className={`nav-link ${activeTab === 'userDetails' ? 'active' : ''}`}
+                    onClick={() => tabClick('userDetails')}
+                    href="#"
+                  >
+                    User Details
+                  </a>
+                </li>
+              </ul>
+              <button type='button'
+                className='btn btn-primary btn-user'
+                data-bs-toggle="modal"
+                data-bs-target="#addUserModal">
+                Add New User
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className='row'>
           <div className='col-md-12'>
@@ -128,7 +135,7 @@ const Profile = () => {
                                 className='form-control'
                                 type='text'
                                 id='userId_unique'
-                                value = {0}
+                                //value={data.UniqueUserId }
                                 disabled
                               />
                             </div>
@@ -145,7 +152,7 @@ const Profile = () => {
                           </div>
                           <div className='col-md-6'>
                             <div className='mb-3'>
-                              <label className='form-label'>Password </label>
+                              <label className='form-label'>Password</label>
                               <input
                                 className='form-control'
                                 type='text'

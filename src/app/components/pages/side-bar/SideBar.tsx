@@ -23,7 +23,7 @@ const SideBar = () => {
     }
     const userRoleId = localStorage.getItem("UserRoleId");
     const firstName = localStorage.getItem("FirstName");
-    const roleNAme = localStorage.getItem("UserRoleName");
+    const roleName = localStorage.getItem("UserRoleName");
     const firstLetter = firstName ? firstName.charAt(0).toUpperCase() : "";
     return (
         <div className="App">
@@ -36,7 +36,7 @@ const SideBar = () => {
                 }}
                 id="mySidebar"
             >
-                <nav className="navbar topnavbar" style={{ background: "#6357ae", height: "60px" }}>
+                <nav className="navbar topnavbar d-flex justify-content-center" style={{ background: "#6357ae", height: "60px" }}>
                     <div className="navbar-header">
                         <img
                             src={atiLogo}
@@ -58,7 +58,7 @@ const SideBar = () => {
                                 <div className='user-info text-center d-flex flex-column'>
                                     <span className='user-name'>Hello, {firstName}</span>
                                     <span className='user-role'>
-                                        <Link to='/home-page/profile' className='text-decoration-none text-purple'>{roleNAme} </Link>
+                                        <Link to='/home-page/profile' className='text-decoration-none text-purple'>{roleName} </Link>
                                         <FontAwesomeIcon icon={faEdit} />
                                     </span>
                                 </div>
